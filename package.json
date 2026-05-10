@@ -1,0 +1,29 @@
+{
+  "name": "mo-portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio website for Mohened Alkhadr - Frontend Developer",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx http-server -p 8080",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vvvwqmohened-lang/mo.git"
+  },
+  "keywords": [
+    "portfolio",
+    "frontend",
+    "developer",
+    "website"
+  ],
+  "author": "Mohened Alkhadr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vvvwqmohened-lang/mo/issues"
+  },
+  "homepage": "https://github.com/vvvwqmohened-lang/mo#readme",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
