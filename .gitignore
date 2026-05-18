@@ -1,0 +1,3 @@
+# Local Firebase config (do not commit your real credentials)
+# Add a file named `firebase-config.local.js` containing your real project config.
+firebase-config.local.js
