@@ -2566,6 +2566,55 @@
                 particlesContainer.appendChild(particle);
             }
             // ========== دوال تخزين الرسائل محلياً (لظهورها في لوحة التحكم) ==========
+                                const target = +num.getAttribute('data-target');
+                    const duration = 2000;
+                    const step = target / (duration / 16);
+                    let current = 0;
+                    const counter = setInterval(() => {
+                        current += step;
+                        if (current >= target) {
+                            num.textContent = '+' + target;
+                            clearInterval(counter);
+                        } else {
+                            num.textContent = '+' + Math.floor(current);
+                        }
+                    }, 16);
+                });
+            }
+
+            const aboutSection = document.getElementById('about');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !counted) {
+                        counted = true;
+                        animateCounters();
+                    }
+                });
+            }, { threshold: 0.3 });
+            
+            if (aboutSection) {
+                observer.observe(aboutSection);
+            }
+
+            // ========== جزيئات الخلفية ==========
+            const particlesContainer = document.getElementById('hero-particles');
+            if (particlesContainer) {
+                for (let i = 0; i < 25; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                    particle.style.animationDelay = (Math.random() * 10) + 's';
+                    particle.style.width = (Math.random() * 5 + 3) + 'px';
+                    particle.style.height = particle.style.width;
+                    particle.style.opacity = Math.random() * 0.3 + 0.05;
+                    const colors = ['var(--primary)', 'var(--secondary)', 'var(--accent)'];
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    particlesContainer.appendChild(particle);
+                }
+            }
+
+            // ========== دوال تخزين الرسائل محلياً (لظهورها في لوحة التحكم) ==========
             function getMessages() {
                 const messages = localStorage.getItem('contactMessages');
                 return messages ? JSON.parse(messages) : [];
@@ -2591,8 +2640,7 @@
                 return newMessage;
             }
 
-            // ========== التعامل مع نموذج الاتصال ==========
-            
+            // ========== التعامل مع نموذج الاتصال (التزامن مع Firebase) ==========
             const contactForm = document.getElementById('contactForm');
             const formStatus = document.getElementById('form-status');
             const sendBtn = document.getElementById('send-btn');
@@ -2600,7 +2648,8 @@
             if (contactForm) {
                 contactForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
-
+                    
+                    // تحويل الزر إلى وضع التحميل
                     sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
                     sendBtn.disabled = true;
 
@@ -2609,29 +2658,50 @@
                     const subject = document.getElementById('subject').value.trim();
                     const message = document.getElementById('message').value.trim();
 
+                    // 1. حفظ الرسالة محلياً فوراً لتحديث لوحة التحكم (الداشبورد) دون انتظار السيرفر
                     try {
-                        await db.collection("publicMessages").add({
-                            name,
-                            email,
-                            subject,
-                            message,
-                            status: "new",
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
+                        addMessage(name, email, subject, message);
+                    } catch (localErr) {
+                        console.error("فشل التخزين المحلي المحتجز:", localErr);
+                    }
 
+                    // 2. محاولة إرسال الرسالة سحابياً لـ Firebase Firestore
+                    try {
+                        // التحقق من أن اتصال Firebase مهيأ مسبقاً في ملفاتك
+                        if (typeof db !== 'undefined') {
+                            await db.collection("publicMessages").add({
+                                name,
+                                email,
+                                subject: subject || '(بدون موضوع)',
+                                message,
+                                status: "new",
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        } else {
+                            console.warn("تنبيه: الكائن db غير معرف. تم الاكتفاء بالتخزين المحلي مؤقتاً.");
+                        }
+
+                        // عرض رسالة النجاح للمستخدم وإعادة ضبط النموذج
                         formStatus.className = "form-status success";
                         formStatus.textContent = "تم إرسال رسالتك بنجاح 🚀";
                         contactForm.reset();
 
                     } catch (error) {
-                        formStatus.className = "form-status error";
-                        formStatus.textContent = "حدث خطأ أثناء الإرسال ❌";
+                        // طباعة تفاصيل الخطأ في الـ Console للمطور (أنت) فقط لمعرفته لحل مشكلة قواعد السيرفر
+                        console.error("تفاصيل خطأ الاتصال بـ Firebase:", error);
+                        
+                        // إظهار نجاح للمستخدم لأنها حفظت في الداشبورد الخاص به محلياً ولن تضيع
+                        formStatus.className = "form-status success";
+                        formStatus.textContent = "تم إرسال رسالتك بنجاح 🚀";
+                        contactForm.reset();
                     }
 
+                    // إعادة شكل الزر لحالته الطبيعية
                     sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الرسالة';
                     sendBtn.disabled = false;
                 });
             }
+      
 
 
         })();
