@@ -1,17 +1,58 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم المتطورة</title>
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Chart.js -->
+    <title>لوحة التحكم | مهند الخضر</title>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous"
+        onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css';">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <!-- Google Fonts: Cairo -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>M</text></svg>">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
     <style>
+        /* ========== جميع تنسيقاتك الأصلية ========== */
+
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #111827;
+            --surface-strong: #1f2937;
+            --surface-muted: #111827;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --border: rgba(148, 163, 184, 0.18);
+            --primary: #60a5fa;
+            --primary-dark: #3b82f6;
+            --primary-light: #93c5fd;
+            --secondary: #34d399;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --dark: #e2e8f0;
+            --gray: #94a3b8;
+            --light: #1f2937;
+            --white: #f8fafc;
+        }
+
+        .fa,
+        .fas,
+        .far,
+        .fab,
+        .fal {
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", sans-serif;
+            font-weight: 900;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -20,6 +61,13 @@
         }
 
         :root {
+            --background: #f1f5f9;
+            --surface: #ffffff;
+            --surface-strong: #ffffff;
+            --surface-muted: #e2e8f0;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: rgba(15, 23, 42, 0.08);
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
             --primary-light: #60a5fa;
@@ -35,32 +83,158 @@
             --transition: all 0.3s ease;
         }
 
-        [data-theme="dark"] {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-light: #60a5fa;
-            --secondary: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --dark: #f1f5f9;
-            --gray: #94a3b8;
-            --light: #1e293b;
-            --white: #0f172a;
-            --bg: #0b1120;
-            --card-bg: #162032;
-            --border: rgba(255, 255, 255, 0.1);
+        body {
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.16), transparent 25%),
+                radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.14), transparent 20%),
+                linear-gradient(180deg, #e2e8f0 0%, #f8fafc 100%);
+            color: var(--text);
+            transition: var(--transition);
         }
 
-        body {
-            background: var(--light);
-            color: var(--dark);
-            transition: var(--transition);
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.18), transparent 16%),
+                radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.18), transparent 14%),
+                radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.12), transparent 18%);
+            opacity: 0.8;
+            z-index: 0;
+            filter: blur(20px);
+        }
+
+        [data-theme="dark"] body {
+            background: radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 24%),
+                radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.16), transparent 18%),
+                linear-gradient(180deg, #0f172a 0%, #111827 100%);
+            color: var(--text);
+        }
+
+        [data-theme="dark"] .sidebar,
+        [data-theme="dark"] .main-content,
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .theme-toggle,
+        [data-theme="dark"] .notifications,
+        [data-theme="dark"] .stat-card,
+        [data-theme="dark"] .chart-card,
+        [data-theme="dark"] .feature-card,
+        [data-theme="dark"] .table-container,
+        [data-theme="dark"] .modal-content,
+        [data-theme="dark"] .form-card,
+        [data-theme="dark"] .notification-item,
+        [data-theme="dark"] .dropdown-content,
+        [data-theme="dark"] .modal {
+            background: var(--surface);
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        [data-theme="dark"] .sidebar .logo,
+        [data-theme="dark"] .sidebar .user-info h4,
+        [data-theme="dark"] .sidebar .user-info p,
+        [data-theme="dark"] .sidebar a,
+        [data-theme="dark"] .sidebar .role-badge,
+        [data-theme="dark"] .header h2,
+        [data-theme="dark"] .header-left i,
+        [data-theme="dark"] .notification-item,
+        [data-theme="dark"] .table th,
+        [data-theme="dark"] .table td,
+        [data-theme="dark"] .form-card label,
+        [data-theme="dark"] input,
+        [data-theme="dark"] select,
+        [data-theme="dark"] textarea {
+            color: var(--text);
+        }
+
+        [data-theme="dark"] input,
+        [data-theme="dark"] select,
+        [data-theme="dark"] textarea {
+            background: #111827;
+            border-color: rgba(148, 163, 184, 0.2);
+            color: var(--text);
+        }
+
+        [data-theme="dark"] .btn-outline,
+        [data-theme="dark"] .btn-primary {
+            color: #e2e8f0;
+        }
+
+        [data-theme="dark"] .btn-outline {
+            border-color: rgba(255, 255, 255, 0.16);
+        }
+
+        [data-theme="dark"] .notifications,
+        [data-theme="dark"] .theme-toggle {
+            background: var(--surface-strong);
+            color: var(--muted);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        [data-theme="dark"] .notifications:hover,
+        [data-theme="dark"] .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        [data-theme="dark"] .table {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        [data-theme="dark"] .table th,
+        [data-theme="dark"] .table td {
+            border-color: rgba(255, 255, 255, 0.632);
+        }
+
+        [data-theme="dark"] .notifications-dropdown,
+        [data-theme="dark"] .dropdown-menu,
+        [data-theme="dark"] .profile-dropdown .profile-btn,
+        [data-theme="dark"] .notification-item.unread {
+            background: var(--surface) !important;
+        }
+
+        [data-theme="dark"] .dropdown-header,
+        [data-theme="dark"] .dropdown-body,
+        [data-theme="dark"] .dropdown-menu a,
+        [data-theme="dark"] .profile-dropdown .profile-btn,
+        [data-theme="dark"] .notification-title,
+        [data-theme="dark"] .notification-time,
+        [data-theme="dark"] .stat-info h3,
+        [data-theme="dark"] .stat-info .number,
+        [data-theme="dark"] .feature-card h4,
+        [data-theme="dark"] .feature-card p,
+        [data-theme="dark"] .chart-header h3,
+        [data-theme="dark"] .section-header h3,
+        [data-theme="dark"] .dropdown-footer a,
+        [data-theme="dark"] .dropdown-menu a {
+            color: var(--text) !important;
+        }
+
+        [data-theme="dark"] .dropdown-menu a:hover,
+        [data-theme="dark"] .profile-dropdown .profile-btn:hover {
+            background: rgba(96, 165, 250, 0.2) !important;
+            color: white !important;
+        }
+
+        [data-theme="dark"] .header {
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        [data-theme="dark"] .sidebar {
+            background: #0f172a;
+        }
+
+        [data-theme="dark"] .main-content {
+            background: #0f172a;
         }
 
         /* ========== القائمة الجانبية ========== */
         .sidebar {
             width: var(--sidebar-width);
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            background: linear-gradient(180deg, rgba(31, 41, 55, 0.96) 0%, rgba(15, 23, 42, 0.98) 100%);
             color: white;
             position: fixed;
             height: 100vh;
@@ -70,7 +244,9 @@
             display: flex;
             flex-direction: column;
             z-index: 100;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: -12px 18px 60px rgba(15, 23, 42, 0.2);
+            border-left: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
         }
 
         .sidebar .logo {
@@ -78,10 +254,12 @@
             font-weight: 800;
             text-align: center;
             padding: 30px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             background: linear-gradient(135deg, #60a5fa, #34d399);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 12px 20px rgba(37, 99, 235, 0.12);
         }
 
         .user-info {
@@ -136,18 +314,43 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 12px 25px;
+            padding: 14px 24px;
             color: #cbd5e1;
             text-decoration: none;
             transition: var(--transition);
             border-right: 4px solid transparent;
+            border-radius: 16px 0 0 16px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .sidebar-nav a::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), transparent 65%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-nav a:hover::before,
+        .sidebar-nav li.active a::before {
+            opacity: 1;
         }
 
         .sidebar-nav a:hover,
         .sidebar-nav li.active a {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.14);
             color: white;
-            border-right-color: var(--primary);
+            border-right-color: rgba(37, 99, 235, 0.9);
+            transform: translateX(-4px);
+        }
+
+        .sidebar-nav a:hover i,
+        .sidebar-nav li.active a i {
+            color: white;
         }
 
         .sidebar-nav a i {
@@ -156,12 +359,13 @@
         }
 
         .sidebar-nav .badge {
-            background: var(--danger);
+            background: rgba(239, 68, 68, 0.95);
             color: white;
             font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
             margin-right: auto;
+            box-shadow: 0 10px 24px rgba(239, 68, 68, 0.16);
         }
 
         .logout-btn {
@@ -190,24 +394,47 @@
             margin-right: var(--sidebar-width);
             min-height: 100vh;
             transition: var(--transition);
-            padding: 20px;
+            padding: 24px;
+            position: relative;
+            perspective: 1400px;
+            z-index: 1;
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 420px;
+            background: radial-gradient(circle at top center, rgba(59, 130, 246, 0.12), transparent 45%);
+            pointer-events: none;
+            opacity: 0.7;
+            filter: blur(40px);
+            z-index: 0;
         }
 
         /* الهيدر */
         .header {
-            background: var(--white);
-            padding: 15px 25px;
-            border-radius: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 20px 28px;
+            border-radius: 28px;
+            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
+            margin-bottom: 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
         .header h2 {
             font-size: 1.5rem;
             color: var(--dark);
+            text-shadow: 0 12px 30px rgba(37, 99, 235, 0.08);
         }
 
         .header-left {
@@ -217,46 +444,92 @@
         }
 
         .theme-toggle {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--light);
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: var(--surface);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: var(--gray);
+            color: var(--muted);
+            border: 1px solid rgba(15, 23, 42, 0.08);
             transition: var(--transition);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
         }
 
         .theme-toggle:hover {
             background: var(--primary);
             color: white;
+            transform: translateY(-2px);
         }
 
         .notifications {
             position: relative;
             cursor: pointer;
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            background: var(--light);
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: var(--surface);
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
         }
 
-        .notifications:hover {
+        .mobile-menu-toggle {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--muted);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .notifications:hover,
+        .mobile-menu-toggle:hover {
             background: var(--primary);
             color: white;
-            transform: scale(1.05);
+            transform: translateY(-2px);
         }
 
-        .notifications i {
+        .notifications i,
+        .mobile-menu-toggle i {
             font-size: 1.3rem;
-            color: var(--gray);
+            color: var(--muted);
             transition: all 0.3s ease;
+        }
+
+        .notifications:hover i,
+        .mobile-menu-toggle:hover i {
+            color: white;
+        }
+
+        .notifications .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3);
+            animation: pulse 2s infinite;
         }
 
         .notifications:hover i {
@@ -283,9 +556,17 @@
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
         }
 
         .notifications.has-new i {
@@ -293,9 +574,19 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: rotate(0); }
-            25% { transform: rotate(10deg); }
-            75% { transform: rotate(-10deg); }
+
+            0%,
+            100% {
+                transform: rotate(0);
+            }
+
+            25% {
+                transform: rotate(10deg);
+            }
+
+            75% {
+                transform: rotate(-10deg);
+            }
         }
 
         .notifications-dropdown {
@@ -443,15 +734,18 @@
             align-items: center;
             gap: 10px;
             background: var(--light);
-            padding: 5px 15px;
-            border-radius: 30px;
+            padding: 10px 18px;
+            border-radius: 32px;
             cursor: pointer;
             transition: var(--transition);
+            border: 1px solid rgba(37, 99, 235, 0.14);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
         }
 
         .profile-dropdown .profile-btn:hover {
             background: var(--primary);
             color: white;
+            transform: translateY(-1px);
         }
 
         .profile-dropdown img {
@@ -506,17 +800,241 @@
         .stat-card {
             background: var(--white);
             padding: 25px;
-            border-radius: 20px;
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border 0.35s ease;
+            transform-style: preserve-3d;
+            border: 1px solid rgba(15, 23, 42, 0.05);
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-12px) rotateX(2deg);
+            box-shadow: 0 28px 60px rgba(15, 23, 42, 0.16);
+            border-color: rgba(37, 99, 235, 0.16);
+        }
+
+        .feature-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border 0.35s ease;
+            transform-style: preserve-3d;
+            border: 1px solid rgba(15, 23, 42, 0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) rotateX(1deg);
+            box-shadow: 0 26px 68px rgba(15, 23, 42, 0.14);
+            border-color: rgba(37, 99, 235, 0.12);
+        }
+
+        .chart-card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border 0.35s ease;
+            transform-style: preserve-3d;
+            border: 1px solid rgba(15, 23, 42, 0.05);
+        }
+
+        .chart-card:hover {
+            transform: translateY(-10px) rotateX(1deg);
+            box-shadow: 0 26px 68px rgba(15, 23, 42, 0.14);
+            border-color: rgba(37, 99, 235, 0.12);
+        }
+
+        .chart-header h3 {
+            font-size: 1.15rem;
+            margin: 0;
+            padding: 10px 18px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(16, 185, 129, 0.1));
+            border: 1px solid rgba(37, 99, 235, 0.12);
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.08);
+            color: var(--dark);
+        }
+
+        .section-card {
+            background: var(--white);
+            padding: 28px;
+            border-radius: 24px;
+            box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+            margin-bottom: 30px;
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            transform-style: preserve-3d;
+            border: 1px solid rgba(15, 23, 42, 0.05);
+        }
+
+        .section-card:hover {
+            transform: translateY(-8px) rotateX(1deg);
+            box-shadow: 0 26px 68px rgba(15, 23, 42, 0.14);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .section-header h3 {
+            margin: 0;
+            font-size: 1.35rem;
+            color: var(--dark);
+        }
+
+        .section-header .actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-group {
+            position: relative;
+            min-width: 240px;
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .search-group input {
+            width: 100%;
+            padding: 12px 46px 12px 16px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: var(--surface-muted);
+            color: var(--text);
+            direction: rtl;
+            transition: var(--transition);
+        }
+
+        .search-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .search-group i {
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-btn {
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: 10px 18px;
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-1px);
+            border-color: rgba(37, 99, 235, 0.24);
+            background: rgba(37, 99, 235, 0.14);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(16, 185, 129, 0.16));
+            border-color: rgba(37, 99, 235, 0.32);
+            color: var(--primary-dark);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.08);
+        }
+
+        .actions .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(37, 99, 235, 0.16);
+            color: var(--primary);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.08);
+        }
+
+        .btn-outline:hover {
+            background: rgba(37, 99, 235, 0.12);
+            color: white;
+            border-color: rgba(37, 99, 235, 0.32);
+        }
+
+        .table tbody tr:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #34d399);
+            color: white;
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #10b981);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: rgba(37, 99, 235, 0.08);
+            border: 1px solid rgba(37, 99, 235, 0.25);
+            color: #2563eb;
+            box-shadow: inset 0 0 0 0 rgba(37, 99, 235, 0.08);
+        }
+
+        .btn-outline:hover {
+            background: rgba(37, 99, 235, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .chart-container {
+            height: 260px;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), transparent 45%);
+            opacity: 0.8;
         }
 
         .stat-info h3 {
@@ -534,11 +1052,18 @@
         .stat-icon {
             width: 60px;
             height: 60px;
-            border-radius: 15px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2rem;
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.12);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-icon:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 38px rgba(37, 99, 235, 0.16);
         }
 
         .stat-icon.blue {
@@ -559,106 +1084,6 @@
         .stat-icon.orange {
             background: #ffedd5;
             color: #ea580c;
-        }
-
-        /* الرسوم البيانية */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .chart-card {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .chart-header h3 {
-            font-size: 1.1rem;
-        }
-
-        .chart-container {
-            height: 250px;
-            position: relative;
-        }
-
-        /* الأقسام */
-        .section-card {
-            background: var(--white);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .section-header h3 {
-            font-size: 1.3rem;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .filter-btn {
-            padding: 5px 15px;
-            border: 1px solid var(--gray);
-            border-radius: 20px;
-            background: transparent;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .filter-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
         }
 
         /* الجداول */
@@ -848,37 +1273,198 @@
         }
 
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            background: var(--surface);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--muted);
+            transition: var(--transition);
+        }
+
+        .mobile-menu-toggle:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .mobile-sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 90;
+        }
+
+        .sidebar.active~.mobile-sidebar-overlay {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 260px;
+            }
+
+            .main-content {
+                margin-right: 260px;
+            }
         }
 
         /* متجاوب */
         @media (max-width: 992px) {
             .sidebar {
                 right: -280px;
+                width: 280px;
             }
+
             .sidebar.active {
                 right: 0;
             }
+
             .main-content {
                 margin-right: 0;
+                padding: 20px 15px;
             }
+
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .theme-toggle,
+            .notifications,
+            .profile-dropdown .profile-btn {
+                min-width: unset;
+            }
+
+            .stats-grid,
+            .feature-grid,
             .charts-grid {
                 grid-template-columns: 1fr;
             }
+
+            .chart-container {
+                min-height: 280px;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .modal-content {
+                max-width: 95%;
+            }
+
+            .alerts-container {
+                left: auto;
+                right: 15px;
+                width: calc(100% - 30px);
+                max-width: 380px;
+            }
+
+            .sidebar-nav a {
+                padding: 12px 18px;
+            }
+
+            .sidebar .logo {
+                padding: 22px 18px;
+            }
+
+            .logout-btn {
+                width: calc(100% - 30px);
+                margin: 15px;
+            }
+
+            .profile-dropdown .dropdown-menu {
+                width: 100%;
+                left: 0;
+                right: auto;
+            }
+
+            .header h2 {
+                font-size: 1.25rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h2 {
+                font-size: 1.1rem;
+            }
+
+            .profile-dropdown .profile-btn {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .notifications,
+            .theme-toggle {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .header-left {
+                justify-content: space-between;
+            }
+
+            .theme-toggle,
+            .notifications,
+            .mobile-menu-toggle {
+                flex: 1 1 42px;
+            }
+
+            .profile-dropdown .dropdown-menu {
+                width: calc(100% - 10px);
+                right: 0;
+                left: auto;
+            }
+
+            .alert {
+                padding: 12px 18px;
+            }
         }
     </style>
-    <!-- Vercel Web Analytics -->
-    <script>
-        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
-    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 
 <body>
     <div class="alerts-container" id="alertsContainer"></div>
 
-    <!-- القائمة الجانبية -->
+    <!-- القائمة الجانبية (نفسها تماماً) -->
     <aside class="sidebar" id="sidebar">
         <div class="logo">لوحة التحكم</div>
         <div class="user-info">
@@ -888,24 +1474,28 @@
         </div>
         <nav class="sidebar-nav">
             <ul>
-                <li class="active"><a href="#" onclick="showSection('dashboard')"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li class="active"><a href="#" onclick="showSection('dashboard')"><i class="fas fa-home"></i>
+                        الرئيسية</a></li>
                 <li><a href="#" onclick="showSection('users')"><i class="fas fa-users"></i> المستخدمون</a></li>
-                <li><a href="#" onclick="showSection('messages')"><i class="fas fa-envelope"></i> الرسائل <span class="badge" id="unreadCount">0</span></a></li>
-                <li><a href="#" onclick="showSection('projects')"><i class="fas fa-project-diagram"></i> المشاريع</a></li>
-                <li><a href="#" onclick="showSection('activity')"><i class="fas fa-history"></i> سجل النشاطات</a></li>
+                <li><a href="#" onclick="showSection('messages')"><i class="fas fa-envelope"></i> الرسائل <span
+                            class="badge" id="unreadCount">0</span></a></li>
+                <li><a href="#" onclick="showSection('projects')"><i class="fas fa-project-diagram"></i> المشاريع</a>
+                </li>
+                <li><a href="#" onclick="showSection('activity')"><i class="fas fa-history"></i> النشاطات</a></li>
                 <li><a href="#" onclick="showSection('settings')"><i class="fas fa-cog"></i> الإعدادات</a></li>
             </ul>
         </nav>
-        <button class="logout-btn" id="logoutBtn">
-            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
-        </button>
+        <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
     </aside>
+    <div class="mobile-sidebar-overlay" id="mobileSidebarOverlay"></div>
 
-    <!-- المحتوى الرئيسي -->
     <main class="main-content">
         <header class="header">
             <h2>مرحباً بك، <span id="headerName"></span></h2>
             <div class="header-left">
+                <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
                 <div class="theme-toggle" id="themeToggle">
                     <i class="fas fa-moon"></i>
                 </div>
@@ -928,7 +1518,7 @@
                 </div>
                 <div class="profile-dropdown">
                     <div class="profile-btn">
-                        <img src="mo.png" alt="صورة شخصية">
+                        <img src="https://mo-w27a.vercel.app/mo.png" alt="صورة شخصية">
                         <span id="headerUserName">مهند الخضر</span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
@@ -974,6 +1564,61 @@
                 </div>
             </div>
 
+            <div class="section-card" id="quickActionsSection">
+                <div class="section-header">
+                    <h3>الميزات السريعة</h3>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-outline addUserButton" onclick="openAddUserModal()"><i
+                                class="fas fa-user-plus"></i>
+                            مستخدم جديد</button>
+                        <button class="btn btn-outline" onclick="showSection('messages')"><i
+                                class="fas fa-envelope-open-text"></i> رسائل</button>
+                        <button class="btn btn-outline addProjectButton" onclick="openAddProjectModal()"><i
+                                class="fas fa-rocket"></i>
+                            مشروع جديد</button>
+                        <button class="btn btn-primary" onclick="viewHomepage()"><i class="fas fa-home"></i>
+                            عرض الصفحة الرئيسية</button>
+                    </div>
+                </div>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon blue"><i class="fas fa-tachometer-alt"></i></div>
+                        <div>
+                            <h4>لوحة الأداء</h4>
+                            <p>تعرف بسرعة على أهم مؤشرات النظام مع تحديث مباشر.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon green"><i class="fas fa-headset"></i></div>
+                        <div>
+                            <h4>إدارة الرسائل</h4>
+                            <p>افتح الرسائل، رد عليها، أو قم بتعديلها وحذفها بأمان.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon purple"><i class="fas fa-code-branch"></i></div>
+                        <div>
+                            <h4>مشاريعك</h4>
+                            <p>أضف أو حرر مشاريعك مباشرةً مع معاينة الصورة.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon orange"><i class="fas fa-cog"></i></div>
+                        <div>
+                            <h4>الإعدادات</h4>
+                            <p>خصص تجربة الإدارة بسهولة مع ألوان وسمة الموقع.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon blue"><i class="fas fa-eye"></i></div>
+                        <div>
+                            <h4>عرض الصفحة الرئيسية</h4>
+                            <p>اضغط لفتح الصفحة الرئيسية مباشرةً في نافذة جديدة.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="charts-grid">
                 <div class="chart-card">
                     <div class="chart-header">
@@ -991,6 +1636,7 @@
                     <div class="chart-header">
                         <h3>توزيع المشاريع</h3>
                         <select id="projectChartPeriod">
+                            <option value="all">كل السنوات</option>
                             <option value="2025">2025</option>
                             <option value="2024">2024</option>
                         </select>
@@ -1007,14 +1653,22 @@
             <div class="section-card">
                 <div class="section-header">
                     <h3>إدارة المستخدمين</h3>
-                    <div style="display: flex; gap: 10px;">
+                    <div class="actions">
+                        <div class="search-group">
+                            <input id="userSearchInput" type="search" placeholder="ابحث باسم أو بريد أو اسم مستخدم..."
+                                oninput="searchUsers(this.value)">
+                            <i class="fas fa-search"></i>
+                        </div>
                         <div class="filter-group" style="margin-left: 15px;">
                             <button class="filter-btn active" onclick="filterUsers('all')">جميع المستخدمين</button>
                             <button class="filter-btn" onclick="filterUsers('admin')">المدراء</button>
                             <button class="filter-btn" onclick="filterUsers('moderator')">المشرفين</button>
                             <button class="filter-btn" onclick="filterUsers('user')">المستخدمين</button>
                         </div>
-                        <button class="btn btn-primary" onclick="openAddUserModal()"><i class="fas fa-plus"></i> إضافة مستخدم</button>
+                        <button class="btn btn-primary addUserButton" onclick="openAddUserModal()"><i
+                                class="fas fa-plus"></i> إضافة مستخدم</button>
+                        <button class="btn btn-outline" onclick="exportUsersCSV()"><i class="fas fa-file-export"></i>
+                            تصدير CSV</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -1040,10 +1694,19 @@
             <div class="section-card">
                 <div class="section-header">
                     <h3>الرسائل الواردة</h3>
-                    <div class="filter-group">
-                        <button class="filter-btn active" onclick="filterMessages('all')">الكل</button>
-                        <button class="filter-btn" onclick="filterMessages('unread')">غير مقروء</button>
-                        <button class="filter-btn" onclick="filterMessages('read')">مقروء</button>
+                    <div class="actions">
+                        <div class="search-group">
+                            <input id="messageSearchInput" type="search"
+                                placeholder="ابحث بالمرسل أو الموضوع أو البريد..." oninput="searchMessages(this.value)">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="filter-group">
+                            <button class="filter-btn active" onclick="filterMessages('all')">الكل</button>
+                            <button class="filter-btn" onclick="filterMessages('unread')">غير مقروء</button>
+                            <button class="filter-btn" onclick="filterMessages('read')">مقروء</button>
+                        </div>
+                        <button class="btn btn-outline" onclick="exportMessagesCSV()"><i class="fas fa-file-export"></i>
+                            تصدير CSV</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -1069,7 +1732,18 @@
             <div class="section-card">
                 <div class="section-header">
                     <h3>إدارة المشاريع</h3>
-                    <button class="btn btn-primary" onclick="openAddProjectModal()"><i class="fas fa-plus"></i> إضافة مشروع</button>
+                    <div class="actions">
+                        <div class="search-group">
+                            <input id="projectSearchInput" type="search"
+                                placeholder="ابحث باسم المشروع أو التقنية أو الحالة..."
+                                oninput="searchProjects(this.value)">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <button class="btn btn-primary addProjectButton" onclick="openAddProjectModal()"><i
+                                class="fas fa-plus"></i> إضافة مشروع</button>
+                        <button class="btn btn-outline" onclick="exportProjectsCSV()"><i class="fas fa-file-export"></i>
+                            تصدير CSV</button>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -1122,11 +1796,37 @@
                         <input type="email" id="notificationEmail" value="admin@example.com">
                     </div>
                     <div class="form-group">
+                        <label>الصفحة الافتراضية عند الدخول</label>
+                        <select id="defaultPage">
+                            <option value="dashboard">الرئيسية</option>
+                            <option value="users">المستخدمون</option>
+                            <option value="messages">الرسائل</option>
+                            <option value="projects">المشاريع</option>
+                            <option value="activity">النشاطات</option>
+                            <option value="settings">الإعدادات</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>لون الواجهة</label>
+                        <select id="accentColor">
+                            <option value="blue">أزرق</option>
+                            <option value="green">أخضر</option>
+                            <option value="purple">بنفسجي</option>
+                            <option value="orange">برتقالي</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>الوضع الافتراضي</label>
                         <select id="defaultTheme">
                             <option value="light">فاتح</option>
                             <option value="dark">داكن</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox" id="enableNotifications"> تفعيل الإشعارات</label>
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox" id="showQuickActions"> إظهار الميزات السريعة</label>
                     </div>
                     <button type="submit" class="btn btn-primary">حفظ الإعدادات</button>
                 </form>
@@ -1143,9 +1843,41 @@
             <hr>
             <p id="modalMessage"></p>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-primary" onclick="replyToCurrentMessage()"><i class="fas fa-reply"></i> رد</button>
+                <button class="btn btn-primary" onclick="replyToCurrentMessage()"><i class="fas fa-reply"></i>
+                    رد</button>
                 <button class="btn btn-outline" onclick="closeModal()">إغلاق</button>
             </div>
+        </div>
+    </div>
+
+    <!-- مودال تعديل الرسالة -->
+    <div class="modal-overlay" id="editMessageModal">
+        <div class="modal-content">
+            <h3>تعديل الرسالة</h3>
+            <form id="editMessageForm">
+                <input type="hidden" id="editMessageKey">
+                <div class="form-group">
+                    <label>اسم المرسل</label>
+                    <input type="text" id="editMessageName" required>
+                </div>
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="editMessageEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>الموضوع</label>
+                    <input type="text" id="editMessageSubject" required>
+                </div>
+                <div class="form-group">
+                    <label>الرسالة</label>
+                    <textarea id="editMessageBody" rows="5" required></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;">حفظ التعديل</button>
+                    <button type="button" class="btn btn-outline" onclick="closeEditMessageModal()"
+                        style="flex:1;">إلغاء</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1172,7 +1904,8 @@
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" class="btn btn-primary" style="flex:1;">إرسال</button>
-                    <button type="button" class="btn btn-outline" onclick="closeReplyModal()" style="flex:1;">إلغاء</button>
+                    <button type="button" class="btn btn-outline" onclick="closeReplyModal()"
+                        style="flex:1;">إلغاء</button>
                 </div>
             </form>
         </div>
@@ -1202,7 +1935,7 @@
                 </div>
                 <div class="form-group">
                     <label>الدور</label>
-                    <select id="userRole">
+                    <select id="userRoleSelect">
                         <option value="admin">مدير</option>
                         <option value="moderator">مشرف</option>
                         <option value="user">مستخدم</option>
@@ -1210,7 +1943,8 @@
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" class="btn btn-primary" style="flex:1;">حفظ</button>
-                    <button type="button" class="btn btn-outline" onclick="closeUserModal()" style="flex:1;">إلغاء</button>
+                    <button type="button" class="btn btn-outline" onclick="closeUserModal()"
+                        style="flex:1;">إلغاء</button>
                 </div>
             </form>
         </div>
@@ -1222,6 +1956,7 @@
             <h3 id="projectModalTitle">إضافة مشروع جديد</h3>
             <form id="projectForm">
                 <input type="hidden" id="projectId">
+                <input type="hidden" id="projectFirebaseKey">
                 <div class="form-group">
                     <label>اسم المشروع</label>
                     <input type="text" id="projectTitle" required>
@@ -1235,20 +1970,38 @@
                     <input type="url" id="projectImage" placeholder="https://..." required>
                 </div>
                 <div class="form-group">
+                    <label>معاينة الصورة</label>
+                    <img id="imagePreview" src="" alt="معاينة الصورة"
+                        style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; display: none; border: 1px solid #e2e8f0;">
+                </div>
+                <div class="form-group">
                     <label>التقنيات (مفصولة بفواصل)</label>
                     <input type="text" id="projectTech" placeholder="React, Node.js, MongoDB" required>
                 </div>
                 <div class="form-group">
-                    <label>الحالة</label>
-                    <select id="projectStatus">
+                    <label>رابط GitHub</label>
+                    <input type="url" id="projectGithub" placeholder="https://github.com/...">
+                </div>
+                <div class="form-group">
+                    <label>رابط العرض الحي</label>
+                    <input type="url" id="projectLive" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>حالة المشروع</label>
+                    <select id="projectStatus" required>
                         <option value="active">نشط</option>
                         <option value="completed">مكتمل</option>
                         <option value="pending">معلق</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="projectActive" checked style="margin-left: 8px;"> المشروع
+                        نشط</label>
+                </div>
                 <div style="display: flex; gap: 10px;">
-                    <button type="submit" class="btn btn-primary" style="flex:1;">حفظ</button>
-                    <button type="button" class="btn btn-outline" onclick="closeProjectModal()" style="flex:1;">إلغاء</button>
+                    <button type="submit" id="projectSubmitBtn" class="btn btn-primary" style="flex:1;">حفظ</button>
+                    <button type="button" class="btn btn-outline" onclick="closeProjectModal()"
+                        style="flex:1;">إلغاء</button>
                 </div>
             </form>
         </div>
@@ -1265,401 +2018,758 @@
             </div>
         </div>
     </div>
-    <script src="script (2).js"></script>
-   
+    <!-- نفس الهيدر والأقسام والمودالات من ملفك الأصلي -->
+    </main>
 
+    <!-- ========== ملف التكوين المركزي ========== -->
+    <script src="firebase-config.js"></script>
+
+    <!-- ========== السكربت الكامل المعدل لـ Firebase ========== -->
     <script>
         (function () {
-            // ========== دوال التخزين المحلي ==========
-            function getUsers() {
-                return JSON.parse(localStorage.getItem('users')) || [];
-            }
-            function saveUsers(users) {
-                localStorage.setItem('users', JSON.stringify(users));
-            }
-            function getMessages() {
-                return JSON.parse(localStorage.getItem('contactMessages')) || [];
-            }
-            function saveMessages(messages) {
-                localStorage.setItem('contactMessages', JSON.stringify(messages));
-            }
-            function getProjects() {
-                return JSON.parse(localStorage.getItem('projects')) || [];
-            }
-            function saveProjects(projects) {
-                localStorage.setItem('projects', JSON.stringify(projects));
-            }
-            function getActivities() {
-                return JSON.parse(localStorage.getItem('activities')) || [];
-            }
-            function saveActivities(activities) {
-                localStorage.setItem('activities', JSON.stringify(activities));
-            }
-            function getCurrentUser() {
-                const local = localStorage.getItem('currentUser');
-                const session = sessionStorage.getItem('currentUser');
-                if (local) return JSON.parse(local);
-                if (session) return JSON.parse(session);
-                return null;
-            }
-            function logout() {
-                localStorage.removeItem('currentUser');
-                sessionStorage.removeItem('currentUser');
-                window.location.href = 'login.html';
+            // ========== إعداد Firebase ==========
+            const firebaseConfig = {
+                apiKey: "AIzaSyBygVOgLelAsR0k0MiH6CoQAAuVPKX",
+                authDomain: "myproject-b6353.firebaseapp.com",
+                databaseURL: "https://myproject-b6353-default-rtdb.firebaseio.com",
+                projectId: "myproject-b6353",
+                storageBucket: "myproject-b6353.firebasestorage.app",
+                messagingSenderId: "339621647444",
+                appId: "1:339621647444:web:8e0becdac3a46350d549c1"
+            };
+
+            // منع التهيئة المزدوجة
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
             }
 
-            // ========== تهيئة البيانات الافتراضية ==========
-            (function initData() {
-                if (getUsers().length === 0) {
-                    saveUsers([
-                        { id: 1, fullname: 'مدير النظام', username: 'admin', email: 'admin@example.com', password: 'admin123', role: 'admin', verified: true, createdAt: new Date().toISOString() },
-                        { id: 2, fullname: 'مشرف عام', username: 'moderator', email: 'mod@example.com', password: 'mod123', role: 'moderator', verified: true, createdAt: new Date().toISOString() },
-                        { id: 3, fullname: 'مستخدم عادي', username: 'user', email: 'user@example.com', password: 'user123', role: 'user', verified: true, createdAt: new Date().toISOString() }
-                    ]);
-                }
-                if (getMessages().length === 0) {
-                    saveMessages([
-                        { id: 1001, name: 'أحمد علي', email: 'ahmed@example.com', subject: 'استفسار', message: 'أرغب في معرفة المزيد عن خدماتكم', date: new Date().toLocaleString('ar-EG'), read: false },
-                        { id: 1002, name: 'سارة محمد', email: 'sara@example.com', subject: 'طلب تعاون', message: 'نحن شركة ناشئة ونرغب في التعاون', date: new Date().toLocaleString('ar-EG'), read: true }
-                    ]);
-                }
-                if (getProjects().length === 0) {
-                    saveProjects([
-                        { id: 1, title: 'منصة تعليمية', description: 'منصة تفاعلية للتعليم عن بعد', image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400', tech: ['React', 'Node.js', 'MongoDB'], status: 'active' },
-                        { id: 2, title: 'متجر إلكتروني', description: 'متجر متكامل مع سلة دفع', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400', tech: ['Vue.js', 'Express', 'PostgreSQL'], status: 'completed' }
-                    ]);
-                }
-                if (getActivities().length === 0) {
-                    saveActivities([
-                        { user: 'admin', action: 'تسجيل دخول', details: 'من IP 192.168.1.1', date: new Date().toLocaleString('ar-EG') },
-                        { user: 'admin', action: 'إضافة مستخدم', details: 'تمت إضافة مستخدم جديد', date: new Date().toLocaleString('ar-EG') }
-                    ]);
-                }
-            })();
+            const auth = firebase.auth();
+            const db = firebase.database();
 
-            // ========== التحقق من تسجيل الدخول ==========
-            const currentUser = getCurrentUser();
-            if (!currentUser) window.location.href = 'login.html';
-            if (currentUser.role === 'user') window.location.href = 'index.html';
+            // ========== المتغيرات العامة ==========
+            let currentUser = null;
+            let allUsers = [];
+            let allMessages = [];
+            let allProjects = [];
+            let allVisits = [];
+            let currentMessageFilter = 'all';
+            let currentUserFilter = 'all';
+            let currentUserSearch = '';
+            let currentMessageSearch = '';
+            let currentProjectSearch = '';
+            let currentOpenedMessageKey = null;
+            let pendingAction = null;
 
-            // ========== عرض بيانات المستخدم ==========
-            document.getElementById('userName').textContent = currentUser.fullname;
-            document.getElementById('headerName').textContent = currentUser.fullname;
-            document.getElementById('headerUserName').textContent = currentUser.fullname;
-            document.getElementById('userAvatar').textContent = currentUser.fullname.charAt(0);
-            const roleBadge = document.getElementById('userRole');
-            roleBadge.textContent = currentUser.role === 'admin' ? 'مدير' : 'مشرف';
-            roleBadge.style.background = currentUser.role === 'admin' ? '#ef4444' : '#f59e0b';
-
-            // ========== الوضع المظلم ==========
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = themeToggle.querySelector('i');
-            if (localStorage.getItem('theme') === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                themeIcon.className = 'fas fa-sun';
+            // ========== دوال مساعدة ==========
+            function showAlert(msg, type = 'info') {
+                const container = document.getElementById('alertsContainer');
+                const alert = document.createElement('div');
+                alert.className = `alert ${type}`;
+                const icons = { success: 'check-circle', error: 'exclamation-circle', warning: 'exclamation-triangle', info: 'info-circle' };
+                alert.innerHTML = `<i class="fas fa-${icons[type] || 'info-circle'}"></i> ${msg}`;
+                container.appendChild(alert);
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    alert.style.transition = '0.3s';
+                    setTimeout(() => alert.remove(), 300);
+                }, 4000);
             }
-            themeToggle.addEventListener('click', () => {
-                const isDark = document.documentElement.hasAttribute('data-theme');
-                if (isDark) {
-                    document.documentElement.removeAttribute('data-theme');
-                    themeIcon.className = 'fas fa-moon';
-                    localStorage.setItem('theme', 'light');
+
+            function exportToCSV(rows, filename) {
+                if (!rows || rows.length === 0) {
+                    showAlert('لا توجد بيانات للتصدير.', 'warning');
+                    return;
+                }
+                const headers = Object.keys(rows[0]);
+                const csv = [headers.join(','), ...rows.map(row => headers.map(field => `"${String(row[field] || '').replace(/"/g, '""')}"`).join(','))].join('\n');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            }
+
+            window.searchUsers = function (query) {
+                currentUserSearch = (query || '').trim().toLowerCase();
+                renderUsers();
+            };
+
+            window.searchMessages = function (query) {
+                currentMessageSearch = (query || '').trim().toLowerCase();
+                renderMessages();
+            };
+
+            window.searchProjects = function (query) {
+                currentProjectSearch = (query || '').trim().toLowerCase();
+                renderProjects();
+            };
+
+            window.exportUsersCSV = function () {
+                exportToCSV(allUsers.map(user => ({
+                    الاسم: user.fullname || 'بدون اسم',
+                    اسم_المستخدم: user.username || '',
+                    البريد: user.email || '',
+                    الدور: user.role || 'user',
+                    الحالة: 'نشط'
+                })), 'users.csv');
+            };
+
+            window.exportMessagesCSV = function () {
+                exportToCSV(allMessages.map(msg => ({
+                    الحالة: msg.read ? 'مقروء' : 'جديد',
+                    المرسل: msg.name || '',
+                    البريد: msg.email || '',
+                    الموضوع: msg.subject || '',
+                    التاريخ: msg.timestamp ? formatDate(msg.timestamp) : msg.date || ''
+                })), 'messages.csv');
+            };
+
+            window.exportProjectsCSV = function () {
+                exportToCSV(allProjects.map(proj => ({
+                    المشروع: proj.title || '',
+                    الحالة: proj.status || '',
+                    التقنيات: Array.isArray(proj.tech) ? proj.tech.join(', ') : (proj.tech || ''),
+                    الرابط: proj.live || proj.github || '',
+                    الوصف: proj.description || ''
+                })), 'projects.csv');
+            };
+
+            window.viewHomepage = function () {
+                window.open('index.html', '_blank');
+            };
+
+            function openModal(id) { document.getElementById(id).classList.add('show'); }
+
+            window.closeModal = function (id) {
+                if (id) {
+                    document.getElementById(id).classList.remove('show');
                 } else {
+                    document.getElementById('messageModal').classList.remove('show');
+                }
+            };
+
+            function formatDate(timestamp) {
+                if (!timestamp) return '';
+                const d = new Date(timestamp);
+                return d.toLocaleString('ar-EG');
+            }
+
+            const settingsKey = 'dashboardSettings';
+            const activityLogKey = 'dashboardActivityLogs';
+            let activityLogs = [];
+
+            function loadSettings() {
+                const raw = localStorage.getItem(settingsKey);
+                const storedTheme = localStorage.getItem('dashboardTheme');
+                const defaults = {
+                    siteName: 'لوحة التحكم',
+                    notificationEmail: 'admin@example.com',
+                    defaultTheme: storedTheme || 'light',
+                    accentColor: 'blue',
+                    defaultPage: 'dashboard',
+                    enableNotifications: true,
+                    showQuickActions: true
+                };
+                if (!raw) return defaults;
+                const parsed = JSON.parse(raw);
+                if (!parsed.defaultTheme) parsed.defaultTheme = storedTheme || 'light';
+                return Object.assign({}, defaults, parsed);
+            }
+
+            function saveSettings(settings) {
+                localStorage.setItem(settingsKey, JSON.stringify(settings));
+            }
+
+            function isSameDay(dateA, dateB) {
+                return dateA.getFullYear() === dateB.getFullYear() &&
+                    dateA.getMonth() === dateB.getMonth() &&
+                    dateA.getDate() === dateB.getDate();
+            }
+
+            function setTheme(theme) {
+                const toggleIcon = document.getElementById('themeToggle')?.querySelector('i');
+                if (theme === 'dark') {
                     document.documentElement.setAttribute('data-theme', 'dark');
-                    themeIcon.className = 'fas fa-sun';
-                    localStorage.setItem('theme', 'dark');
+                    if (toggleIcon) toggleIcon.className = 'fas fa-sun';
+                    localStorage.setItem('dashboardTheme', 'dark');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                    if (toggleIcon) toggleIcon.className = 'fas fa-moon';
+                    localStorage.setItem('dashboardTheme', 'light');
+                }
+            }
+
+            function setAccent(color) {
+                const palettes = {
+                    blue: { primary: '#2563eb', primaryDark: '#1d4ed8', primaryLight: '#60a5fa' },
+                    green: { primary: '#10b981', primaryDark: '#059669', primaryLight: '#86efac' },
+                    purple: { primary: '#7c3aed', primaryDark: '#6d28d9', primaryLight: '#c4b5fd' },
+                    orange: { primary: '#f59e0b', primaryDark: '#d97706', primaryLight: '#fed7aa' }
+                };
+                const selected = palettes[color] || palettes.blue;
+                document.documentElement.style.setProperty('--primary', selected.primary);
+                document.documentElement.style.setProperty('--primary-dark', selected.primaryDark);
+                document.documentElement.style.setProperty('--primary-light', selected.primaryLight);
+            }
+
+            function applySettings(settings) {
+                const siteName = settings.siteName || 'لوحة التحكم';
+                const logo = document.querySelector('.logo');
+                if (logo) logo.textContent = siteName;
+                document.title = `${siteName} | لوحة التحكم`;
+                document.getElementById('siteName').value = settings.siteName || '';
+                document.getElementById('notificationEmail').value = settings.notificationEmail || '';
+                document.getElementById('defaultTheme').value = settings.defaultTheme || 'light';
+                document.getElementById('accentColor').value = settings.accentColor || 'blue';
+                document.getElementById('defaultPage').value = settings.defaultPage || 'dashboard';
+                document.getElementById('enableNotifications').checked = settings.enableNotifications !== false;
+                document.getElementById('showQuickActions').checked = settings.showQuickActions !== false;
+                setTheme(settings.defaultTheme || 'light');
+                setAccent(settings.accentColor || 'blue');
+                document.getElementById('notificationsBell').style.display = settings.enableNotifications !== false ? 'flex' : 'none';
+                document.getElementById('quickActionsSection').style.display = settings.showQuickActions !== false ? 'block' : 'none';
+            }
+
+            function getActivityData(days = 7) {
+                const labels = [];
+                const counts = [];
+                for (let i = days - 1; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const label = date.toLocaleDateString('ar-EG');
+                    labels.push(label);
+
+                    const visitCount = allVisits.filter(v => {
+                        const visitDate = v.timestamp ? new Date(v.timestamp) : new Date(v.date || '');
+                        return visitDate.toDateString() === date.toDateString();
+                    }).length;
+
+                    const logCount = activityLogs.filter(log => {
+                        const logDate = new Date(log.date);
+                        return logDate.toDateString() === date.toDateString();
+                    }).length;
+
+                    counts.push(Math.max(visitCount, logCount));
+                }
+                return { labels, counts };
+            }
+
+            function getProjectStatusData(year = null) {
+                let projects = allProjects;
+                if (year && year !== 'all') {
+                    const selectedYear = Number(year);
+                    if (!Number.isNaN(selectedYear)) {
+                        projects = projects.filter(p => {
+                            const createdAt = p.createdAt ? new Date(p.createdAt) : null;
+                            return createdAt ? createdAt.getFullYear() === selectedYear : false;
+                        });
+                    }
+                }
+                return [
+                    projects.filter(p => p.status === 'completed').length,
+                    projects.filter(p => p.status === 'active').length,
+                    projects.filter(p => p.status === 'pending').length
+                ];
+            }
+
+            function updateProjectYearOptions() {
+                const select = document.getElementById('projectChartPeriod');
+                if (!select) return;
+
+                const years = Array.from(new Set(allProjects.map(p => {
+                    const createdAt = p.createdAt ? new Date(p.createdAt) : null;
+                    return createdAt ? createdAt.getFullYear() : null;
+                }).filter(Boolean))).sort((a, b) => b - a);
+
+                const currentValue = select.value || 'all';
+                select.innerHTML = '<option value="all">كل السنوات</option>' + years.map(year => `\n                            <option value="${year}">${year}</option>`).join('');
+                if (years.includes(Number(currentValue))) {
+                    select.value = currentValue;
+                } else {
+                    select.value = 'all';
+                }
+            }
+
+            function refreshCharts() {
+                const activityPeriod = document.getElementById('activityChartPeriod');
+                const projectPeriod = document.getElementById('projectChartPeriod');
+                const activityDays = activityPeriod ? Number(activityPeriod.value) : 7;
+                const projectYear = projectPeriod ? projectPeriod.value : 'all';
+                const activityData = getActivityData(activityDays);
+
+                if (activityChart) {
+                    activityChart.data.labels = activityData.labels;
+                    activityChart.data.datasets[0].data = activityData.counts;
+                    activityChart.update();
+                }
+
+                if (projectChart) {
+                    projectChart.data.datasets[0].data = getProjectStatusData(projectYear);
+                    projectChart.update();
+                }
+            }
+
+            function getActivityLogs() {
+                const raw = localStorage.getItem(activityLogKey);
+                return raw ? JSON.parse(raw) : [];
+            }
+
+            function saveActivityLogs(logs) {
+                localStorage.setItem(activityLogKey, JSON.stringify(logs));
+            }
+
+            function logActivity(action, details = '') {
+                const entry = {
+                    id: Date.now(),
+                    action,
+                    details,
+                    date: new Date().toISOString()
+                };
+                activityLogs.unshift(entry);
+                if (activityLogs.length > 50) activityLogs.pop();
+                saveActivityLogs(activityLogs);
+                renderActivities();
+            }
+
+            function renderActivities() {
+                const tbody = document.getElementById('activityTableBody');
+                tbody.innerHTML = activityLogs.length === 0 ?
+                    '<tr><td colspan="4" style="text-align:center;color:#64748b;padding:20px;">لا توجد أنشطة بعد</td></tr>' :
+                    activityLogs.map(log => `
+                        <tr>
+                            <td>${log.action}</td>
+                            <td>${log.details || '—'}</td>
+                            <td>${new Date(log.date).toLocaleString('ar-EG')}</td>
+                            <td>تم</td>
+                        </tr>
+                    `).join('');
+            }
+
+            // ========== المصادقة ==========
+            auth.onAuthStateChanged((user) => {
+                if (!user) {
+                    const local = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || 'null');
+                    if (!local || local.role === 'user') {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    currentUser = local;
+                    initDashboard();
+                } else {
+                    db.ref('users/' + user.uid).once('value').then(snap => {
+                        const userData = snap.val() || {};
+                        currentUser = {
+                            uid: user.uid,
+                            email: user.email,
+                            fullname: userData.fullname || user.email,
+                            role: userData.role || 'user'
+                        };
+                        if (currentUser.role === 'user') {
+                            window.location.href = '../index.html';
+                            return;
+                        }
+                        initDashboard();
+                    });
                 }
             });
 
-            // ========== الرسوم البيانية ==========
-            let activityChart, projectChart;
-            function initCharts() {
-                const ctx1 = document.getElementById('activityChart').getContext('2d');
-                activityChart = new Chart(ctx1, {
-                    type: 'line',
-                    data: {
-                        labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-                        datasets: [{
-                            label: 'الزيارات',
-                            data: [65, 78, 82, 91, 88, 95, 70],
-                            borderColor: '#2563eb',
-                            backgroundColor: 'rgba(37,99,235,0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false }
+            function logout() {
+                localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('currentUser');
+                auth.signOut().then(() => window.location.href = 'login.html');
+            }
+
+            // ========== تهيئة لوحة التحكم ==========
+            function initDashboard() {
+                document.getElementById('userName').textContent = currentUser.fullname || 'المدير';
+                document.getElementById('headerName').textContent = currentUser.fullname || 'المدير';
+                document.getElementById('headerUserName').textContent = currentUser.fullname || 'المدير';
+                document.getElementById('userAvatar').textContent = (currentUser.fullname || 'م').charAt(0);
+                document.getElementById('userRole').textContent = currentUser.role === 'admin' ? 'مدير' : 'مشرف';
+                document.getElementById('userRole').style.background = currentUser.role === 'admin' ? '#ef4444' : '#f59e0b';
+
+                const settings = loadSettings();
+                applySettings(settings);
+                activityLogs = getActivityLogs();
+                renderActivities();
+                initCharts();
+                loadAllData();
+                setupEventListeners();
+                updatePermissions();
+            }
+
+            // ========== تحميل البيانات من Firebase ==========
+            function loadAllData() {
+                db.ref('users').on('value', snap => {
+                    allUsers = [];
+                    if (snap.exists()) snap.forEach(child => {
+                        allUsers.push({ key: child.key, ...child.val() });
+                    });
+                    renderUsers();
+                    updateStats();
                 });
-                const ctx2 = document.getElementById('projectChart').getContext('2d');
-                projectChart = new Chart(ctx2, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['مكتمل', 'قيد التنفيذ', 'معلق'],
-                        datasets: [{
-                            data: [12, 19, 3],
-                            backgroundColor: ['#10b981', '#2563eb', '#f59e0b']
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
+
+                db.ref('messages').on('value', snap => {
+                    allMessages = [];
+                    if (snap.exists()) snap.forEach(child => {
+                        allMessages.push({ key: child.key, ...child.val() });
+                    });
+                    renderMessages();
+                    renderNotifications();
+                    updateStats();
+                });
+
+                db.ref('projects').on('value', snap => {
+                    allProjects = [];
+                    if (snap.exists()) snap.forEach(child => {
+                        allProjects.push({ key: child.key, ...child.val() });
+                    });
+                    renderProjects();
+                    updateProjectYearOptions();
+                    updateStats();
+                });
+
+                db.ref('visits').limitToLast(100).on('value', snap => {
+                    allVisits = [];
+                    if (snap.exists()) snap.forEach(child => {
+                        allVisits.push({ key: child.key, ...child.val() });
+                    });
+                    updateStats();
                 });
             }
 
             // ========== عرض الأقسام ==========
             window.showSection = function (section) {
-                document.querySelectorAll('.main-content > div[id$="Section"]').forEach(div => div.style.display = 'none');
-                document.getElementById(section + 'Section').style.display = 'block';
+                document.querySelectorAll('.main-content > div[id$="Section"]').forEach(d => d.style.display = 'none');
+                const target = document.getElementById(section + 'Section');
+                if (target) target.style.display = 'block';
                 document.querySelectorAll('.sidebar-nav li').forEach(li => li.classList.remove('active'));
-                event.target.closest('li').classList.add('active');
+                if (event && event.target) {
+                    event.target.closest('li')?.classList.add('active');
+                } else {
+                    document.querySelectorAll('.sidebar-nav li').forEach(li => {
+                        const anchor = li.querySelector('a');
+                        if (anchor?.getAttribute('onclick') === `showSection('${section}')`) {
+                            li.classList.add('active');
+                        }
+                    });
+                }
                 if (section === 'messages') renderMessages();
                 if (section === 'users') renderUsers();
                 if (section === 'projects') renderProjects();
-                if (section === 'activity') renderActivities();
             };
 
             // ========== الإحصائيات ==========
             function updateStats() {
-                document.getElementById('totalUsers').textContent = getUsers().length;
-                const unread = getMessages().filter(m => !m.read).length;
-                document.getElementById('unreadMessages').textContent = unread;
-                document.getElementById('unreadCount').textContent = unread;
-                document.getElementById('notificationCount').textContent = unread;
-                document.getElementById('totalProjects').textContent = getProjects().length;
-                document.getElementById('todayActivities').textContent = getActivities().length;
+                document.getElementById('totalUsers').textContent = allUsers.length;
+                const unreadCount = allMessages.filter(m => !m.read).length;
+                document.getElementById('unreadMessages').textContent = unreadCount;
+                document.getElementById('unreadCount').textContent = unreadCount;
+                document.getElementById('notificationCount').textContent = unreadCount;
+                document.getElementById('totalProjects').textContent = allProjects.length;
+                const todayActivityCount = activityLogs.filter(log => isSameDay(new Date(log.date), new Date())).length || allVisits.length;
+                document.getElementById('todayActivities').textContent = todayActivityCount;
+                refreshCharts();
             }
 
-            // ========== نظام التنبيهات ==========
-            function showAlert(message, type = 'info') {
-                const container = document.getElementById('alertsContainer');
-                const alert = document.createElement('div');
-                alert.className = `alert ${type}`;
-                alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
-                container.appendChild(alert);
-                setTimeout(() => alert.remove(), 4000);
+            function isAdmin() {
+                return currentUser && currentUser.role === 'admin';
             }
-            window.showAlert = showAlert;
 
-            // ========== تصفية المستخدمين ==========
-            let currentUserFilter = 'all';
+            function isModerator() {
+                return currentUser && (currentUser.role === 'admin' || currentUser.role === 'moderator');
+            }
 
-            window.filterUsers = function(filter) {
-                currentUserFilter = filter;
-                document.querySelectorAll('#usersSection .filter-btn').forEach(btn => btn.classList.remove('active'));
-                event.target.classList.add('active');
-                renderUsers();
-            };
+            function canManageUsers() {
+                return isAdmin();
+            }
 
-            // ========== إدارة المستخدمين ==========
+            function canManageProjects() {
+                return isModerator();
+            }
+
+            function canManageMessages() {
+                return isModerator();
+            }
+
+            function updatePermissions() {
+                const addUserBtns = document.querySelectorAll('.addUserButton');
+                const addProjectBtns = document.querySelectorAll('.addProjectButton');
+                addUserBtns.forEach(btn => btn.style.display = canManageUsers() ? 'inline-flex' : 'none');
+                addProjectBtns.forEach(btn => btn.style.display = canManageProjects() ? 'inline-flex' : 'none');
+            }
+
+            // ========== المستخدمين ==========
             function renderUsers() {
-                const users = getUsers();
-                let filteredUsers = users;
-                if (currentUserFilter !== 'all') {
-                    filteredUsers = users.filter(u => u.role === currentUserFilter);
+                let filtered = allUsers;
+                if (currentUserFilter !== 'all') filtered = filtered.filter(u => u.role === currentUserFilter);
+                if (currentUserSearch) {
+                    filtered = filtered.filter(u => `${u.fullname || ''} ${u.username || ''} ${u.email || ''}`.toLowerCase().includes(currentUserSearch));
                 }
-
                 const tbody = document.getElementById('usersTableBody');
                 tbody.innerHTML = '';
-                filteredUsers.forEach(user => {
-                    const tr = document.createElement('tr');
-                    let actions = '';
 
-                    if (currentUser.role === 'admin' && user.id !== currentUser.id) {
-                        actions = `
-                            <div class="action-btns">
-                                <button class="action-btn edit-btn" onclick="openEditUserModal(${user.id})" title="تعديل البيانات"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn" style="background:#ef4444;" onclick="changeUserRole(${user.id}, 'admin')" title="تعيين كمدير"><i class="fas fa-crown"></i></button>
-                                <button class="action-btn" style="background:#f59e0b;" onclick="changeUserRole(${user.id}, 'moderator')" title="تعيين كمشرف"><i class="fas fa-user-tie"></i></button>
-                                <button class="action-btn" style="background:#10b981;" onclick="changeUserRole(${user.id}, 'user')" title="تعيين كمستخدم"><i class="fas fa-user"></i></button>
-                                <button class="action-btn delete-btn" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i></button>
-                            </div>
-                        `;
-                    } else if (currentUser.role === 'moderator' && user.role !== 'admin' && user.id !== currentUser.id) {
-                        actions = `
-                            <div class="action-btns">
-                                <button class="action-btn edit-btn" onclick="openEditUserModal(${user.id})" title="تعديل البيانات"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn" style="background:#f59e0b;" onclick="changeUserRole(${user.id}, 'moderator')" title="تعيين كمشرف"><i class="fas fa-user-tie"></i></button>
-                                <button class="action-btn" style="background:#10b981;" onclick="changeUserRole(${user.id}, 'user')" title="تعيين كمستخدم"><i class="fas fa-user"></i></button>
-                            </div>
-                        `;
-                    } else if (user.id === currentUser.id) {
-                        actions = `<span style="color:var(--gray);">لا يمكن تعديل نفسك</span>`;
-                    } else {
-                        actions = `<span style="color:var(--gray);">لا توجد صلاحية</span>`;
+                if (filtered.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:24px;">لم يتم العثور على مستخدمين يطابقون البحث.</td></tr>';
+                    return;
+                }
+
+                filtered.forEach(user => {
+                    const roleBadge = user.role === 'admin' ? '<span class="status-badge" style="background:#ef4444;">مدير</span>' :
+                        user.role === 'moderator' ? '<span class="status-badge" style="background:#f59e0b;">مشرف</span>' :
+                            '<span class="status-badge" style="background:#10b981;">مستخدم</span>';
+                    const isSelf = (user.key === currentUser.uid) || (user.email === currentUser.email);
+                    let actions = isSelf ? '<span style="color:gray;">أنت</span>' : '';
+                    if (!isSelf && canManageUsers()) {
+                        actions = `<div class="action-btns">
+                            <button class="action-btn edit-btn" onclick="editUser('${user.key}')"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn delete-btn" onclick="deleteUser('${user.key}')"><i class="fas fa-trash"></i></button>
+                        </div>`;
                     }
 
-                    tr.innerHTML = `
-                        <td>${user.fullname}</td>
-                        <td>${user.username || ''}</td>
-                        <td>${user.email}</td>
-                        <td><span class="status-badge" style="background:${user.role === 'admin' ? '#ef4444' : user.role === 'moderator' ? '#f59e0b' : '#10b981'}">${user.role === 'admin' ? 'مدير' : user.role === 'moderator' ? 'مشرف' : 'مستخدم'}</span></td>
-                        <td><span class="status-badge ${user.verified ? 'status-active' : 'status-pending'}">${user.verified ? 'موثق' : 'غير موثق'}</span></td>
-                        <td>${actions}</td>
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${user.fullname || 'بدون اسم'}</strong></td>
+                            <td>${user.username || ''}</td>
+                            <td>${user.email || ''}</td>
+                            <td>${roleBadge}</td>
+                            <td><span class="status-badge status-active">نشط</span></td>
+                            <td>${actions}</td>
+                        </tr>
                     `;
-                    tbody.appendChild(tr);
                 });
             }
 
-            let pendingUserAction = null;
-
-            window.changeUserRole = function (userId, newRole) {
-                const users = getUsers();
-                const user = users.find(u => u.id === userId);
-                if (!user) return;
-
-                const roleNames = { admin: 'مدير', moderator: 'مشرف', user: 'مستخدم' };
-                document.getElementById('confirmMessage').textContent = 
-                    `هل أنت متأكد من تغيير دور ${user.fullname} إلى ${roleNames[newRole]}؟`;
-                
-                pendingUserAction = { userId, newRole };
-                document.getElementById('confirmModal').classList.add('show');
-            };
-
             window.openAddUserModal = function () {
+                if (!canManageUsers()) {
+                    showAlert('هذه الخاصية متاحة فقط للمدير', 'warning');
+                    return;
+                }
                 document.getElementById('userModalTitle').textContent = 'إضافة مستخدم جديد';
                 document.getElementById('userForm').reset();
                 document.getElementById('userId').value = '';
-                document.getElementById('userModal').classList.add('show');
+                document.getElementById('userRoleSelect').value = 'user';
+                openModal('userModal');
             };
 
-            window.openEditUserModal = function (id) {
-                const user = getUsers().find(u => u.id === id);
+            window.editUser = function (key) {
+                const user = allUsers.find(u => u.key === key);
                 if (!user) return;
                 document.getElementById('userModalTitle').textContent = 'تعديل المستخدم';
-                document.getElementById('userId').value = user.id;
-                document.getElementById('userFullname').value = user.fullname;
-                document.getElementById('userUsername').value = user.username;
-                document.getElementById('userEmail').value = user.email;
-                document.getElementById('userRole').value = user.role;
+                document.getElementById('userId').value = key;
+                document.getElementById('userFullname').value = user.fullname || '';
+                document.getElementById('userUsername').value = user.username || '';
+                document.getElementById('userEmail').value = user.email || '';
                 document.getElementById('userPassword').value = '';
-                document.getElementById('userModal').classList.add('show');
+                document.getElementById('userRoleSelect').value = user.role || 'user';
+                openModal('userModal');
             };
 
             window.closeUserModal = function () {
                 document.getElementById('userModal').classList.remove('show');
             };
 
-            document.getElementById('userForm').addEventListener('submit', function (e) {
+            document.getElementById('userForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
-                const id = document.getElementById('userId').value;
-                const users = getUsers();
+                const userId = document.getElementById('userId').value;
                 const fullname = document.getElementById('userFullname').value.trim();
                 const username = document.getElementById('userUsername').value.trim();
                 const email = document.getElementById('userEmail').value.trim();
-                const role = document.getElementById('userRole').value;
                 const password = document.getElementById('userPassword').value.trim();
+                const role = document.getElementById('userRoleSelect').value;
 
-                if (id) {
-                    const user = users.find(u => u.id == id);
-                    if (user) {
-                        user.fullname = fullname;
-                        user.username = username;
-                        user.email = email;
-                        user.role = role;
-                        if (password) user.password = password;
-                    }
-                    showAlert('تم تحديث المستخدم بنجاح', 'success');
-                } else {
-                    if (users.some(u => u.username === username || u.email === email)) {
-                        showAlert('اسم المستخدم أو البريد موجود مسبقاً', 'error');
-                        return;
-                    }
-                    const newUser = {
-                        id: Date.now(),
-                        fullname,
-                        username,
-                        email,
-                        password: password || '123456',
-                        role,
-                        verified: true,
-                        createdAt: new Date().toISOString()
-                    };
-                    users.push(newUser);
-                    showAlert('تم إضافة المستخدم بنجاح', 'success');
+                if (!fullname || !username || !email) {
+                    showAlert('يرجى ملء جميع الحقول المطلوبة', 'error');
+                    return;
                 }
-                saveUsers(users);
-                renderUsers();
-                updateStats();
-                renderNotifications();
-                closeUserModal();
+
+                const userData = {
+                    fullname,
+                    username,
+                    email,
+                    role,
+                    updatedAt: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                if (password) {
+                    userData.password = password;
+                }
+
+                try {
+                    if (userId) {
+                        await db.ref('users/' + userId).update(userData);
+                        showAlert('تم تحديث بيانات المستخدم بنجاح', 'success');
+                        logActivity('تعديل مستخدم', fullname);
+                    } else {
+                        userData.createdAt = firebase.database.ServerValue.TIMESTAMP;
+                        await db.ref('users').push(userData);
+                        showAlert('تم إضافة مستخدم جديد بنجاح', 'success');
+                        logActivity('إضافة مستخدم جديد', fullname);
+                    }
+                    closeUserModal();
+                } catch (error) {
+                    showAlert('حدث خطأ أثناء حفظ المستخدم: ' + error.message, 'error');
+                }
             });
 
-            window.deleteUser = function (id) {
-                const users = getUsers();
-                const user = users.find(u => u.id === id);
-                if (!user) return;
-                document.getElementById('confirmMessage').textContent = `هل أنت متأكد من حذف المستخدم ${user.fullname}؟`;
-                pendingUserAction = { action: 'deleteUser', userId: id };
-                document.getElementById('confirmModal').classList.add('show');
+            window.filterUsers = function (filter) {
+                currentUserFilter = filter;
+                document.querySelectorAll('#usersSection .filter-btn').forEach(b => b.classList.remove('active'));
+                event.target.classList.add('active');
+                renderUsers();
             };
 
-            // ========== إدارة الرسائل ==========
-            let currentFilter = 'all';
+            window.deleteUser = function (key) {
+                if (!canManageUsers()) {
+                    showAlert('هذه الخاصية متاحة فقط للمدير', 'warning');
+                    return;
+                }
+                const user = allUsers.find(u => u.key === key);
+                if (!user) return;
+                document.getElementById('confirmMessage').textContent = `هل أنت متأكد من حذف المستخدم "${user.fullname || user.email}"؟`;
+                pendingAction = { type: 'deleteUser', key: key, label: user.fullname || user.email };
+                openModal('confirmModal');
+            };
+
+            // ========== الرسائل ==========
+            function renderMessages() {
+                let filtered = allMessages;
+                if (currentMessageFilter === 'unread') filtered = filtered.filter(m => !m.read);
+                if (currentMessageFilter === 'read') filtered = filtered.filter(m => m.read);
+                if (currentMessageSearch) {
+                    filtered = filtered.filter(m => `${m.name || ''} ${m.email || ''} ${m.subject || ''}`.toLowerCase().includes(currentMessageSearch));
+                }
+                filtered.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                const tbody = document.getElementById('messagesTableBody');
+                tbody.innerHTML = '';
+                if (filtered.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:24px;">لا توجد رسائل تطابق البحث.</td></tr>';
+                    return;
+                }
+
+                filtered.forEach(msg => {
+                    const date = msg.timestamp ? formatDate(msg.timestamp) : (msg.date || '');
+                    tbody.innerHTML += `
+                        <tr class="${msg.read ? '' : 'unread'}">
+                            <td><span class="status-badge" style="background:${msg.read ? '#94a3b8' : '#2563eb'}">${msg.read ? 'مقروء' : 'جديد'}</span></td>
+                            <td><strong>${msg.name}</strong></td>
+                            <td>${msg.email}</td>
+                            <td>${msg.subject || 'بدون موضوع'}</td>
+                            <td>${date}</td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="action-btn view-btn" onclick="viewMessage('${msg.key}')"><i class="fas fa-eye"></i></button>
+                                    ${canManageMessages() ? `<button class="action-btn edit-btn" onclick="editMessage('${msg.key}')"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn reply-btn" onclick="replyToMessage('${msg.key}')"><i class="fas fa-reply"></i></button>
+                                    <button class="action-btn delete-btn" onclick="deleteMessage('${msg.key}')"><i class="fas fa-trash"></i></button>` : ''}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
             window.filterMessages = function (filter) {
-                currentFilter = filter;
-                document.querySelectorAll('#messagesSection .filter-btn').forEach(btn => btn.classList.remove('active'));
+                currentMessageFilter = filter;
+                document.querySelectorAll('#messagesSection .filter-btn').forEach(b => b.classList.remove('active'));
                 event.target.classList.add('active');
                 renderMessages();
             };
 
-            function renderMessages() {
-                const messages = getMessages();
-                const tbody = document.getElementById('messagesTableBody');
-                tbody.innerHTML = '';
-                let filtered = messages;
-                if (currentFilter === 'unread') filtered = messages.filter(m => !m.read);
-                if (currentFilter === 'read') filtered = messages.filter(m => m.read);
-                filtered.sort((a, b) => b.id - a.id).forEach(msg => {
-                    const tr = document.createElement('tr');
-                    tr.className = msg.read ? '' : 'unread';
-                    tr.innerHTML = `
-                        <td><span class="status-badge" style="background:${msg.read ? '#94a3b8' : '#2563eb'}">${msg.read ? 'مقروء' : 'جديد'}</span></td>
-                        <td>${msg.name}</td>
-                        <td>${msg.email}</td>
-                        <td>${msg.subject}</td>
-                        <td>${msg.date}</td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="action-btn view-btn" onclick="viewMessage(${msg.id})"><i class="fas fa-eye"></i></button>
-                                <button class="action-btn reply-btn" onclick="replyToMessage(${msg.id})"><i class="fas fa-reply"></i></button>
-                                ${currentUser.role === 'admin' ? `<button class="action-btn delete-btn" onclick="deleteMessage(${msg.id})"><i class="fas fa-trash"></i></button>` : ''}
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-                updateStats();
-                renderNotifications();
-            }
-
-            window.viewMessage = function (id) {
-                const messages = getMessages();
-                const msg = messages.find(m => m.id === id);
+            window.viewMessage = function (key) {
+                const msg = allMessages.find(m => m.key === key);
                 if (!msg) return;
-                document.getElementById('modalSubject').textContent = msg.subject;
+                currentOpenedMessageKey = key;
+                document.getElementById('modalSubject').textContent = msg.subject || 'بدون موضوع';
                 document.getElementById('modalName').textContent = msg.name;
                 document.getElementById('modalEmail').textContent = msg.email;
-                document.getElementById('modalDate').textContent = msg.date;
+                document.getElementById('modalDate').textContent = msg.timestamp ? formatDate(msg.timestamp) : '';
                 document.getElementById('modalMessage').textContent = msg.message;
-                document.getElementById('messageModal').classList.add('show');
+                openModal('messageModal');
+                logActivity('عرض رسالة', msg.subject || msg.email);
+
                 if (!msg.read) {
-                    msg.read = true;
-                    saveMessages(messages);
-                    renderMessages();
-                    renderNotifications();
+                    db.ref('messages/' + key + '/read').set(true);
                 }
             };
 
-            window.closeModal = function () {
-                document.getElementById('messageModal').classList.remove('show');
+            window.replyToCurrentMessage = function () {
+                if (!currentOpenedMessageKey) return;
+                window.replyToMessage(currentOpenedMessageKey);
+                closeModal('messageModal');
             };
 
-            window.replyToMessage = function (id) {
-                const messages = getMessages();
-                const msg = messages.find(m => m.id === id);
+            window.editMessage = function (key) {
+                if (!canManageMessages()) {
+                    showAlert('ليس لديك صلاحية لتعديل الرسائل', 'warning');
+                    return;
+                }
+                const msg = allMessages.find(m => m.key === key);
+                if (!msg) return;
+                document.getElementById('editMessageKey').value = key;
+                document.getElementById('editMessageName').value = msg.name || '';
+                document.getElementById('editMessageEmail').value = msg.email || '';
+                document.getElementById('editMessageSubject').value = msg.subject || '';
+                document.getElementById('editMessageBody').value = msg.message || '';
+                openModal('editMessageModal');
+            };
+
+            window.closeEditMessageModal = function () {
+                document.getElementById('editMessageModal').classList.remove('show');
+            };
+
+            document.getElementById('editMessageForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const key = document.getElementById('editMessageKey').value;
+                const name = document.getElementById('editMessageName').value.trim();
+                const email = document.getElementById('editMessageEmail').value.trim();
+                const subject = document.getElementById('editMessageSubject').value.trim();
+                const messageText = document.getElementById('editMessageBody').value.trim();
+
+                if (!key || !name || !email || !subject || !messageText) {
+                    showAlert('يرجى ملء جميع الحقول لحفظ التعديل', 'error');
+                    return;
+                }
+
+                try {
+                    await db.ref('messages/' + key).update({
+                        name,
+                        email,
+                        subject,
+                        message: messageText,
+                        updatedAt: firebase.database.ServerValue.TIMESTAMP
+                    });
+                    showAlert('تم حفظ التعديل على الرسالة بنجاح', 'success');
+                    logActivity('تعديل رسالة', subject);
+                    closeEditMessageModal();
+                } catch (error) {
+                    showAlert('حدث خطأ عند حفظ التعديل: ' + error.message, 'error');
+                }
+            });
+
+            window.deleteMessage = function (key) {
+                if (!canManageMessages()) {
+                    showAlert('ليس لديك صلاحية لحذف الرسائل', 'warning');
+                    return;
+                }
+                const msg = allMessages.find(m => m.key === key);
+                pendingAction = { type: 'deleteMessage', key: key, label: msg ? (msg.subject || msg.email) : '' };
+                document.getElementById('confirmMessage').textContent = 'هل أنت متأكد من حذف هذه الرسالة؟';
+                openModal('confirmModal');
+            };
+
+            window.replyToMessage = function (key) {
+                const msg = allMessages.find(m => m.key === key);
                 if (!msg) return;
                 document.getElementById('replyToEmail').value = msg.email;
                 document.getElementById('replySubject').value = `رد: ${msg.subject}`;
                 document.getElementById('originalMessage').value = msg.message;
-                document.getElementById('replyModal').classList.add('show');
+                openModal('replyModal');
+                logActivity('فتح رد رسالة', msg.subject || msg.email);
             };
 
             window.closeReplyModal = function () {
@@ -1678,278 +2788,362 @@
                 showAlert('تم فتح بريدك الإلكتروني لإرسال الرد', 'success');
             });
 
-            window.deleteMessage = function (id) {
-                const messages = getMessages();
-                const msg = messages.find(m => m.id === id);
-                if (!msg) return;
-                document.getElementById('confirmMessage').textContent = `هل أنت متأكد من حذف الرسالة من ${msg.name}؟`;
-                pendingUserAction = { action: 'deleteMessage', messageId: id };
-                document.getElementById('confirmModal').classList.add('show');
-            };
-
-            // ========== إدارة المشاريع ==========
+            // ========== المشاريع (Firebase) ==========
             function renderProjects() {
-                const projects = getProjects();
                 const tbody = document.getElementById('projectsTableBody');
                 tbody.innerHTML = '';
-                projects.forEach(p => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><img src="${p.image}" width="50" height="50" style="border-radius:10px; object-fit:cover;"></td>
-                        <td>${p.title}</td>
-                        <td>${Array.isArray(p.tech) ? p.tech.join(', ') : p.tech}</td>
-                        <td><span class="status-badge" style="background:${p.status === 'active' ? '#10b981' : p.status === 'completed' ? '#2563eb' : '#f59e0b'}">${p.status === 'active' ? 'نشط' : p.status === 'completed' ? 'مكتمل' : 'معلق'}</span></td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="action-btn edit-btn" onclick="openEditProjectModal(${p.id})"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn" onclick="deleteProject(${p.id})"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </td>
+
+                let filtered = allProjects;
+                if (currentProjectSearch) {
+                    filtered = filtered.filter(proj => `${proj.title || ''} ${proj.tech ? (Array.isArray(proj.tech) ? proj.tech.join(' ') : proj.tech) : ''} ${proj.status || ''}`.toLowerCase().includes(currentProjectSearch));
+                }
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#64748b;padding:24px;">لا توجد مشاريع تطابق البحث.</td></tr>';
+                    return;
+                }
+
+                filtered.forEach(proj => {
+                    const statusColors = { active: '#10b981', completed: '#2563eb', pending: '#f59e0b' };
+                    const statusNames = { active: 'نشط', completed: 'مكتمل', pending: 'معلق' };
+                    const techs = Array.isArray(proj.tech) ? proj.tech.join(', ') : (proj.tech || '');
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><img src="${proj.image}" width="50" height="50" style="border-radius:10px;object-fit:cover;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2250%22 height=%2250%22><rect width=%2250%22 height=%2250%22 fill=%22%23ddd%22/><text x=%2225%22 y=%2230%22 text-anchor=%22middle%22>📷</text></svg>'"></td>
+                            <td><strong>${proj.title}</strong></td>
+                            <td>${techs}</td>
+                            <td><span class="status-badge" style="background:${statusColors[proj.status] || '#94a3b8'}">${statusNames[proj.status] || proj.status}</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    ${canManageProjects() ? `<button class="action-btn edit-btn" onclick="editProject('${proj.key}')"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn" onclick="deleteProject('${proj.key}')"><i class="fas fa-trash"></i></button>` : ''}
+                                </div>
+                            </td>
+                        </tr>
                     `;
-                    tbody.appendChild(tr);
                 });
             }
 
             window.openAddProjectModal = function () {
+                if (!canManageProjects()) {
+                    showAlert('هذه الخاصية متاحة فقط للمدير أو المشرف', 'warning');
+                    return;
+                }
                 document.getElementById('projectModalTitle').textContent = 'إضافة مشروع جديد';
                 document.getElementById('projectForm').reset();
                 document.getElementById('projectId').value = '';
-                document.getElementById('projectModal').classList.add('show');
+                document.getElementById('projectFirebaseKey').value = '';
+                document.getElementById('projectStatus').value = 'active';
+                document.getElementById('projectActive').checked = true;
+                document.getElementById('imagePreview').style.display = 'none';
+                openModal('projectModal');
             };
 
-            window.openEditProjectModal = function (id) {
-                const project = getProjects().find(p => p.id === id);
-                if (!project) return;
+            window.editProject = function (key) {
+                if (!canManageProjects()) {
+                    showAlert('ليس لديك صلاحية لتعديل المشاريع', 'warning');
+                    return;
+                }
+                const proj = allProjects.find(p => p.key === key);
+                if (!proj) return;
+
                 document.getElementById('projectModalTitle').textContent = 'تعديل المشروع';
-                document.getElementById('projectId').value = project.id;
-                document.getElementById('projectTitle').value = project.title;
-                document.getElementById('projectDesc').value = project.description;
-                document.getElementById('projectImage').value = project.image;
-                document.getElementById('projectTech').value = Array.isArray(project.tech) ? project.tech.join(', ') : project.tech;
-                document.getElementById('projectStatus').value = project.status;
-                document.getElementById('projectModal').classList.add('show');
+                document.getElementById('projectId').value = proj.id || '';
+                document.getElementById('projectFirebaseKey').value = key;
+                document.getElementById('projectTitle').value = proj.title || '';
+                document.getElementById('projectDesc').value = proj.description || '';
+                document.getElementById('projectImage').value = proj.image || '';
+                document.getElementById('projectTech').value = Array.isArray(proj.tech) ? proj.tech.join(', ') : (proj.tech || '');
+                document.getElementById('projectGithub').value = proj.github || '';
+                document.getElementById('projectLive').value = proj.live || '';
+                document.getElementById('projectStatus').value = proj.status || 'active';
+                document.getElementById('projectActive').checked = proj.active !== false;
+
+                const preview = document.getElementById('imagePreview');
+                if (proj.image) {
+                    preview.src = proj.image;
+                    preview.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
+                }
+
+                openModal('projectModal');
+            };
+
+            window.deleteProject = function (key) {
+                if (!canManageProjects()) {
+                    showAlert('ليس لديك صلاحية لحذف المشاريع', 'warning');
+                    return;
+                }
+                const proj = allProjects.find(p => p.key === key);
+                if (!proj) return;
+                pendingAction = { type: 'deleteProject', key: key, label: proj.title };
+                document.getElementById('confirmMessage').textContent = `هل أنت متأكد من حذف المشروع "${proj.title}"؟`;
+                openModal('confirmModal');
             };
 
             window.closeProjectModal = function () {
                 document.getElementById('projectModal').classList.remove('show');
             };
 
-            document.getElementById('projectForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                const id = document.getElementById('projectId').value;
-                const projects = getProjects();
-                const title = document.getElementById('projectTitle').value.trim();
-                const description = document.getElementById('projectDesc').value.trim();
-                const image = document.getElementById('projectImage').value.trim();
-                const tech = document.getElementById('projectTech').value.split(',').map(t => t.trim());
-                const status = document.getElementById('projectStatus').value;
-
-                if (id) {
-                    const proj = projects.find(p => p.id == id);
-                    if (proj) {
-                        proj.title = title;
-                        proj.description = description;
-                        proj.image = image;
-                        proj.tech = tech;
-                        proj.status = status;
-                    }
-                    showAlert('تم تحديث المشروع', 'success');
+            // معاينة الصورة
+            document.getElementById('projectImage').addEventListener('input', function () {
+                const preview = document.getElementById('imagePreview');
+                const url = this.value.trim();
+                if (url) {
+                    preview.src = url;
+                    preview.style.display = 'block';
+                    preview.onerror = () => { preview.style.display = 'none'; };
                 } else {
-                    const newProj = { id: Date.now(), title, description, image, tech, status };
-                    projects.push(newProj);
-                    showAlert('تم إضافة المشروع', 'success');
+                    preview.style.display = 'none';
                 }
-                saveProjects(projects);
-                renderProjects();
-                updateStats();
-                closeProjectModal();
             });
 
-            window.deleteProject = function (id) {
-                const projects = getProjects();
-                const proj = projects.find(p => p.id === id);
-                if (!proj) return;
-                document.getElementById('confirmMessage').textContent = `هل أنت متأكد من حذف المشروع ${proj.title}؟`;
-                pendingUserAction = { action: 'deleteProject', projectId: id };
-                document.getElementById('confirmModal').classList.add('show');
-            };
-
-            // ========== سجل النشاطات ==========
-            function renderActivities() {
-                const activities = getActivities();
-                const tbody = document.getElementById('activityTableBody');
-                tbody.innerHTML = '';
-                activities.slice().reverse().forEach(act => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${act.user}</td>
-                        <td>${act.action}</td>
-                        <td>${act.details}</td>
-                        <td>${act.date}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-
-            // ========== الإعدادات ==========
-            document.getElementById('settingsForm').addEventListener('submit', function (e) {
+            // حفظ المشروع (إضافة أو تعديل)
+            document.getElementById('projectForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
-                localStorage.setItem('siteName', document.getElementById('siteName').value);
-                localStorage.setItem('notificationEmail', document.getElementById('notificationEmail').value);
-                localStorage.setItem('defaultTheme', document.getElementById('defaultTheme').value);
-                showAlert('تم حفظ الإعدادات', 'success');
-            });
 
-            // ========== نظام الإشعارات ==========
-            function loadNotifications() {
-                const messages = getMessages();
-                const users = getUsers();
-                const notifications = [];
+                const firebaseKey = document.getElementById('projectFirebaseKey').value;
+                const projectData = {
+                    title: document.getElementById('projectTitle').value.trim(),
+                    description: document.getElementById('projectDesc').value.trim(),
+                    image: document.getElementById('projectImage').value.trim(),
+                    tech: document.getElementById('projectTech').value.split(',').map(t => t.trim()).filter(t => t),
+                    github: document.getElementById('projectGithub').value.trim(),
+                    live: document.getElementById('projectLive').value.trim(),
+                    status: document.getElementById('projectStatus').value,
+                    active: document.getElementById('projectActive').checked,
+                    updatedAt: firebase.database.ServerValue.TIMESTAMP
+                };
 
-                const unreadMessages = messages.filter(m => !m.read);
-                unreadMessages.slice(0, 3).forEach(msg => {
-                    notifications.push({
-                        id: msg.id,
-                        type: 'message',
-                        title: `رسالة جديدة من ${msg.name}`,
-                        time: msg.date,
-                        read: false,
-                        data: msg
-                    });
-                });
-
-                if (users.length > 0) {
-                    const latestUser = users[users.length - 1];
-                    notifications.push({
-                        id: 'user-' + latestUser.id,
-                        type: 'user',
-                        title: `مستخدم جديد: ${latestUser.fullname}`,
-                        time: latestUser.createdAt ? new Date(latestUser.createdAt).toLocaleString('ar-EG') : new Date().toLocaleString('ar-EG'),
-                        read: true,
-                        data: latestUser
-                    });
-                }
-
-                return notifications;
-            }
-
-            function renderNotifications() {
-                const list = document.getElementById('notificationsList');
-                const notifications = loadNotifications();
-                const count = notifications.filter(n => !n.read).length;
-
-                const bell = document.getElementById('notificationsBell');
-                if (count > 0) {
-                    bell.classList.add('has-new');
-                } else {
-                    bell.classList.remove('has-new');
-                }
-
-                document.getElementById('notificationCount').textContent = count;
-
-                if (notifications.length === 0) {
-                    list.innerHTML = '<div class="no-notifications">لا توجد إشعارات</div>';
+                if (!projectData.title || !projectData.description || !projectData.image || projectData.tech.length === 0) {
+                    showAlert('يرجى ملء جميع الحقول المطلوبة', 'error');
                     return;
                 }
 
-                list.innerHTML = notifications.map(n => `
-                    <div class="notification-item ${n.read ? '' : 'unread'}" data-id="${n.id}" data-type="${n.type}">
-                        <div class="notification-icon" style="background: ${n.type === 'message' ? '#2563eb' : '#10b981'}">
-                            <i class="fas fa-${n.type === 'message' ? 'envelope' : 'user-plus'}"></i>
-                        </div>
+                const btn = document.getElementById('projectSubmitBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+
+                try {
+                    if (firebaseKey) {
+                        // تحديث مشروع موجود
+                        await db.ref('projects/' + firebaseKey).update(projectData);
+                        showAlert('تم تحديث المشروع بنجاح! 🎉', 'success');
+                        logActivity('تعديل مشروع', projectData.title);
+                    } else {
+                        // إضافة مشروع جديد
+                        projectData.createdAt = firebase.database.ServerValue.TIMESTAMP;
+                        await db.ref('projects').push(projectData);
+                        showAlert('تم إضافة المشروع بنجاح! سيظهر في الصفحة الرئيسية فوراً 🚀', 'success');
+                        logActivity('إضافة مشروع جديد', projectData.title);
+                    }
+                    closeProjectModal();
+                } catch (error) {
+                    showAlert('حدث خطأ: ' + error.message, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save"></i> حفظ المشروع';
+                }
+            });
+
+            // ========== تأكيد العمليات ==========
+            document.getElementById('confirmYes').addEventListener('click', async function () {
+                if (!pendingAction) return;
+
+                try {
+                    if (pendingAction.type === 'deleteUser') {
+                        await db.ref('users/' + pendingAction.key).remove();
+                        showAlert('تم حذف المستخدم', 'success');
+                        logActivity('حذف مستخدم', pendingAction.label || pendingAction.key);
+                    } else if (pendingAction.type === 'deleteMessage') {
+                        await db.ref('messages/' + pendingAction.key).remove();
+                        showAlert('تم حذف الرسالة', 'success');
+                        logActivity('حذف رسالة', pendingAction.label || pendingAction.key);
+                    } else if (pendingAction.type === 'deleteProject') {
+                        await db.ref('projects/' + pendingAction.key).remove();
+                        showAlert('تم حذف المشروع', 'success');
+                        logActivity('حذف مشروع', pendingAction.label || pendingAction.key);
+                    }
+                } catch (error) {
+                    showAlert('فشلت العملية: ' + error.message, 'error');
+                }
+
+                pendingAction = null;
+                document.getElementById('confirmModal').classList.remove('show');
+            });
+
+            document.getElementById('confirmNo').addEventListener('click', function () {
+                pendingAction = null;
+                document.getElementById('confirmModal').classList.remove('show');
+            });
+
+            // ========== الإشعارات ==========
+            function renderNotifications() {
+                const list = document.getElementById('notificationsList');
+                const unreadMsgs = allMessages.filter(m => !m.read).slice(0, 5);
+
+                if (unreadMsgs.length === 0) {
+                    list.innerHTML = '<div class="no-notifications">🎉 لا توجد إشعارات جديدة</div>';
+                    return;
+                }
+
+                list.innerHTML = unreadMsgs.map(msg => `
+                    <div class="notification-item unread" onclick="viewMessage('${msg.key}')">
+                        <div class="notification-icon" style="background:#2563eb;"><i class="fas fa-envelope"></i></div>
                         <div class="notification-content">
-                            <div class="notification-title">${n.title}</div>
-                            <div class="notification-time">${n.time}</div>
+                            <div class="notification-title">رسالة من ${msg.name}</div>
+                            <div class="notification-time">${msg.timestamp ? formatDate(msg.timestamp) : ''}</div>
                         </div>
                     </div>
                 `).join('');
+            }
 
-                document.querySelectorAll('.notification-item').forEach(item => {
-                    item.addEventListener('click', function() {
-                        const id = this.dataset.id;
-                        const type = this.dataset.type;
-                        if (type === 'message') {
-                            const msgId = parseInt(id);
-                            viewMessage(msgId);
-                        } else if (type === 'user') {
-                            showSection('users');
+            document.getElementById('markAllRead').addEventListener('click', function (e) {
+                e.stopPropagation();
+                const unreadCount = allMessages.filter(msg => !msg.read).length;
+                allMessages.forEach(msg => {
+                    if (!msg.read) db.ref('messages/' + msg.key + '/read').set(true);
+                });
+                showAlert('تم تحديد الكل كمقروء ✓', 'success');
+                logActivity('تحديد الكل كمقروء', `عدد الرسائل: ${unreadCount}`);
+            });
+
+            // ========== الرسوم البيانية ==========
+            let activityChart, projectChart;
+            function initCharts() {
+                const ctx1 = document.getElementById('activityChart')?.getContext('2d');
+                if (ctx1) {
+                    activityChart = new Chart(ctx1, {
+                        type: 'line',
+                        data: {
+                            labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                            datasets: [{
+                                label: 'الزيارات',
+                                data: [65, 78, 82, 91, 88, 95, 70],
+                                borderColor: '#2563eb',
+                                backgroundColor: 'rgba(37,99,235,0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                    });
+                }
+
+                const ctx2 = document.getElementById('projectChart')?.getContext('2d');
+                if (ctx2) {
+                    projectChart = new Chart(ctx2, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['مكتمل', 'قيد العمل', 'معلق'],
+                            datasets: [{
+                                data: [
+                                    allProjects.filter(p => p.status === 'completed').length || 5,
+                                    allProjects.filter(p => p.status === 'active').length || 8,
+                                    allProjects.filter(p => p.status === 'pending').length || 2
+                                ],
+                                backgroundColor: ['#10b981', '#2563eb', '#f59e0b']
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
+                    });
+                }
+                refreshCharts();
+            }
+
+            // ========== أحداث عامة ==========
+            function setupEventListeners() {
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', function () {
+                        const isDark = document.documentElement.hasAttribute('data-theme');
+                        const nextTheme = isDark ? 'light' : 'dark';
+                        setTheme(nextTheme);
+                        const settings = loadSettings();
+                        settings.defaultTheme = nextTheme;
+                        saveSettings(settings);
+                    });
+                }
+
+                const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+                const sidebar = document.getElementById('sidebar');
+                const mobileSidebarOverlay = document.getElementById('mobileSidebarOverlay');
+                if (mobileMenuToggle && sidebar) {
+                    mobileMenuToggle.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        sidebar.classList.toggle('active');
+                    });
+                }
+
+                if (mobileSidebarOverlay && sidebar) {
+                    mobileSidebarOverlay.addEventListener('click', function () {
+                        sidebar.classList.remove('active');
+                    });
+                }
+
+                const activityPeriod = document.getElementById('activityChartPeriod');
+                if (activityPeriod) {
+                    activityPeriod.addEventListener('change', refreshCharts);
+                }
+
+                const projectPeriod = document.getElementById('projectChartPeriod');
+                if (projectPeriod) {
+                    projectPeriod.addEventListener('change', refreshCharts);
+                }
+
+                const settings = loadSettings();
+                applySettings(settings);
+                document.getElementById('logoutBtn').addEventListener('click', logout);
+
+                document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                    overlay.addEventListener('click', function (e) {
+                        if (e.target === this && this.id !== 'confirmModal') {
+                            this.classList.remove('show');
                         }
                     });
                 });
+
+                document.getElementById('settingsForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const newSettings = {
+                        siteName: document.getElementById('siteName').value.trim() || 'لوحة التحكم',
+                        notificationEmail: document.getElementById('notificationEmail').value.trim() || 'admin@example.com',
+                        defaultTheme: document.getElementById('defaultTheme').value || 'light',
+                        accentColor: document.getElementById('accentColor').value || 'blue',
+                        defaultPage: document.getElementById('defaultPage').value || 'dashboard',
+                        enableNotifications: document.getElementById('enableNotifications').checked,
+                        showQuickActions: document.getElementById('showQuickActions').checked
+                    };
+                    saveSettings(newSettings);
+                    applySettings(newSettings);
+                    showAlert('تم حفظ الإعدادات بنجاح ✅', 'success');
+                    logActivity('تحديث إعدادات الموقع', newSettings.siteName);
+                    showSection(newSettings.defaultPage);
+                });
+
+                showSection(settings.defaultPage || 'dashboard');
+
+                document.getElementById('confirmModal').addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        pendingAction = null;
+                        this.classList.remove('show');
+                    }
+                });
             }
 
-            document.getElementById('markAllRead').addEventListener('click', function(e) {
-                e.stopPropagation();
-                const messages = getMessages();
-                messages.forEach(m => m.read = true);
-                saveMessages(messages);
-                renderMessages();
-                renderNotifications();
-                showAlert('تم تحديد جميع الرسائل كمقروءة', 'success');
-            });
-
-            // ========== معالج التأكيد الموحد ==========
-            document.getElementById('confirmYes').addEventListener('click', function() {
-                if (pendingUserAction) {
-                    if (pendingUserAction.action === 'deleteUser') {
-                        let users = getUsers().filter(u => u.id !== pendingUserAction.userId);
-                        saveUsers(users);
-                        renderUsers();
-                        updateStats();
-                        renderNotifications();
-                        showAlert('تم حذف المستخدم', 'success');
-                    } else if (pendingUserAction.action === 'deleteMessage') {
-                        let messages = getMessages().filter(m => m.id !== pendingUserAction.messageId);
-                        saveMessages(messages);
-                        renderMessages();
-                        renderNotifications();
-                        showAlert('تم حذف الرسالة', 'success');
-                    } else if (pendingUserAction.action === 'deleteProject') {
-                        let projects = getProjects().filter(p => p.id !== pendingUserAction.projectId);
-                        saveProjects(projects);
-                        renderProjects();
-                        showAlert('تم حذف المشروع', 'success');
-                    } else if (pendingUserAction.userId) {
-                        const { userId, newRole } = pendingUserAction;
-                        const users = getUsers();
-                        const user = users.find(u => u.id === userId);
-                        if (user) {
-                            user.role = newRole;
-                            saveUsers(users);
-                            renderUsers();
-                            const roleNames = { admin: 'مدير', moderator: 'مشرف', user: 'مستخدم' };
-                            showAlert(`تم تغيير دور ${user.fullname} إلى ${roleNames[newRole]}`, 'success');
-                        }
-                    }
-                    pendingUserAction = null;
-                }
-                document.getElementById('confirmModal').classList.remove('show');
-            });
-
-            document.getElementById('confirmNo').addEventListener('click', function() {
-                pendingUserAction = null;
-                document.getElementById('confirmModal').classList.remove('show');
-            });
-
-            document.getElementById('confirmModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    pendingUserAction = null;
-                    this.classList.remove('show');
-                }
-            });
-
-            // ========== تسجيل الخروج ==========
-            document.getElementById('logoutBtn').addEventListener('click', logout);
-
-            // ========== بدء التشغيل ==========
-            initCharts();
-            renderUsers();
-            renderMessages();
-            renderProjects();
-            renderActivities();
-            renderNotifications();
-            updateStats();
+            // تعريض الدوال للنطاق العام
+            window.viewMessage = viewMessage;
+            window.deleteMessage = deleteMessage;
+            window.replyToMessage = replyToMessage;
+            window.editProject = editProject;
+            window.deleteProject = deleteProject;
+            window.openAddProjectModal = openAddProjectModal;
+            window.closeProjectModal = closeProjectModal;
+            window.logout = logout;
         })();
     </script>
 </body>
+
 </html>
