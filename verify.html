@@ -106,7 +106,7 @@
             }
         }
 
-        /* البطاقة ا��رئيسية محسنة جداً */
+        /* البطاقة الرئيسية محسنة جداً */
         .verify-card {
             background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(25px);
@@ -480,6 +480,7 @@
             transform: scale(1) rotate(0deg);
         }
 
+        /* دائرة النجاح المحسّنة */
         .success-circle {
             width: 180px;
             height: 180px;
@@ -489,7 +490,6 @@
             align-items: center;
             justify-content: center;
             margin: 0 auto 40px;
-            font-size: 6rem;
             color: white;
             box-shadow: 0 30px 80px rgba(76, 175, 80, 0.8),
                         inset 0 3px 20px rgba(255, 255, 255, 0.4),
@@ -500,40 +500,91 @@
             overflow: hidden;
         }
 
+        /* الحد الدوار */
         .success-circle::before {
             content: '';
             position: absolute;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.3);
+            border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            animation: ripple 1.8s ease-out;
+            animation: rotateBorder 3s linear infinite;
+            top: -2px;
+            left: -2px;
         }
 
+        /* الموج الداخلي */
         .success-circle::after {
             content: '';
             position: absolute;
             width: 100%;
             height: 100%;
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
-            animation: rotateBorder 3s linear infinite;
+            animation: ripple 1.8s ease-out infinite;
+            z-index: -1;
         }
 
-        @keyframes ripple {
-            from {
-                transform: scale(0.9);
-                opacity: 1;
-            }
+        .success-icon {
+            font-size: 5rem;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* SVG الأيقونة المخصصة */
+        .check-svg {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 11;
+        }
+
+        svg.checkmark {
+            width: 140px;
+            height: 140px;
+            animation: drawCheckmark 0.8s ease-out forwards;
+        }
+
+        svg.checkmark .checkmark-path {
+            stroke-dasharray: 300;
+            stroke-dashoffset: 300;
+            animation: strokeAnimation 0.8s ease-out forwards;
+        }
+
+        @keyframes strokeAnimation {
             to {
-                transform: scale(2.8);
-                opacity: 0;
+                stroke-dashoffset: 0;
             }
         }
 
         @keyframes rotateBorder {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        @keyframes ripple {
+            from {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes drawCheckmark {
+            from {
+                opacity: 0;
+                transform: scale(0) rotate(-180deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
         }
 
         @keyframes successEntry {
@@ -708,8 +759,12 @@
             .success-circle {
                 width: 150px;
                 height: 150px;
-                font-size: 5rem;
                 margin-bottom: 30px;
+            }
+
+            svg.checkmark {
+                width: 110px;
+                height: 110px;
             }
         }
 
@@ -751,7 +806,11 @@
             .success-circle {
                 width: 120px;
                 height: 120px;
-                font-size: 4rem;
+            }
+
+            svg.checkmark {
+                width: 90px;
+                height: 90px;
             }
         }
     </style>
@@ -798,7 +857,11 @@
     <div class="modal-overlay" id="successModal">
         <div class="modal-content">
             <div class="success-circle">
-                <i class="fas fa-check"></i>
+                <svg class="checkmark" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-path" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" 
+                          stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </div>
             <h3>✓ تم التحقق بنجاح!</h3>
             <p>تم تأكيد هويتك بنجاح<br>جاري تحويلك للصفحة الرئيسية...</p>
