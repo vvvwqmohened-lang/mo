@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>التحقق من الرقم</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,12 +14,24 @@
             font-family: 'Cairo', 'Segoe UI', sans-serif;
         }
 
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #6b8cff;
+            --tertiary: #a463f5;
+            --success: #4caf50;
+            --danger: #ff5252;
+            --light-text: rgba(255, 255, 255, 0.95);
+            --semi-text: rgba(255, 255, 255, 0.7);
+            --transition: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
         body {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(-45deg, #667eea, #764ba2, #6b8cff, #a463f5);
+            background: linear-gradient(-45deg, var(--primary), var(--secondary), var(--accent), var(--tertiary));
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             padding: 20px;
@@ -41,6 +54,7 @@
             border-radius: 50%;
             pointer-events: none;
             animation: particleFloat 8s infinite;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
         @keyframes particleFloat {
@@ -57,6 +71,7 @@
             }
         }
 
+        /* البطاقة الرئيسية محسنة */
         .verify-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
@@ -72,6 +87,31 @@
             border: 1.5px solid rgba(255, 255, 255, 0.4);
             z-index: 2;
             position: relative;
+            overflow: hidden;
+        }
+
+        /* تأثير التوهج على البطاقة */
+        .verify-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            animation: shimmerEffect 3s infinite;
+            z-index: 1;
+        }
+
+        @keyframes shimmerEffect {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        .verify-card > * {
+            position: relative;
+            z-index: 2;
         }
 
         @keyframes fadeInUp {
@@ -98,6 +138,7 @@
             }
         }
 
+        /* الشعار محسن */
         .logo {
             font-size: 3rem;
             font-weight: 900;
@@ -108,6 +149,7 @@
             margin-bottom: 10px;
             animation: logoGlow 2s ease-in-out infinite;
             letter-spacing: 2px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
         }
 
         @keyframes logoGlow {
@@ -116,11 +158,12 @@
                 transform: scale(1);
             }
             50% { 
-                filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
+                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.5));
                 transform: scale(1.05);
             }
         }
 
+        /* الشارة محسنة */
         .badge {
             display: inline-block;
             background: rgba(255, 255, 255, 0.2);
@@ -130,6 +173,9 @@
             margin-bottom: 20px;
             animation: slideBadge 0.8s ease-out 0.2s both;
             border: 1px solid rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
         }
 
         @keyframes slideBadge {
@@ -149,6 +195,7 @@
             font-weight: 700;
             font-size: 2rem;
             animation: slideIn 0.8s ease-out 0.3s both;
+            letter-spacing: 1px;
         }
 
         @keyframes slideIn {
@@ -163,18 +210,27 @@
         }
 
         p {
-            color: rgba(255, 255, 255, 0.95);
+            color: var(--light-text);
             margin-bottom: 35px;
             font-size: 1.1rem;
             animation: slideIn 0.8s ease-out 0.4s both;
             line-height: 1.6;
+            font-weight: 500;
         }
 
+        /* المؤقت محسن */
         .timer {
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--semi-text);
             font-size: 0.95rem;
             margin-bottom: 20px;
             animation: slideIn 0.8s ease-out 0.5s both;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 12px 24px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+            backdrop-filter: blur(10px);
         }
 
         .timer i {
@@ -211,9 +267,10 @@
             font-weight: 700;
             text-align: center;
             color: white;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all 0.3s var(--transition);
             outline: none;
             font-family: 'Courier New', monospace;
+            backdrop-filter: blur(10px);
         }
 
         .code-input::placeholder {
@@ -223,7 +280,7 @@
         .code-input:focus {
             border-color: rgba(255, 255, 255, 0.8);
             background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.3),
+            box-shadow: 0 0 25px rgba(102, 126, 234, 0.5),
                         inset 0 0 10px rgba(255, 255, 255, 0.2);
             transform: scale(1.1);
         }
@@ -255,6 +312,7 @@
             50% { transform: translateY(-50%) translateX(-10px); }
         }
 
+        /* زر إعادة الإرسال محسن */
         .resend-btn {
             background: rgba(255, 255, 255, 0.2);
             border: 1.5px solid rgba(255, 255, 255, 0.4);
@@ -263,19 +321,21 @@
             border-radius: 25px;
             cursor: pointer;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s var(--transition);
             animation: slideIn 0.8s ease-out 0.6s both;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.5px;
         }
 
         .resend-btn:hover:not(:disabled) {
             background: rgba(255, 255, 255, 0.3);
             border-color: rgba(255, 255, 255, 0.7);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
 
         .resend-btn:active:not(:disabled) {
@@ -295,7 +355,7 @@
             transform: rotate(-360deg);
         }
 
-        /* النافذة المنبثقة المحسنة */
+        /* النافذة الم��بثقة */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -328,7 +388,7 @@
             box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4),
                         inset 0 1px 30px rgba(255, 255, 255, 0.5);
             transform: scale(0.6) rotate(-10deg);
-            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: transform 0.5s var(--transition);
             border: 2px solid rgba(255, 255, 255, 0.8);
         }
 
@@ -339,7 +399,7 @@
         .success-circle {
             width: 140px;
             height: 140px;
-            background: linear-gradient(135deg, #4caf50, #45a049);
+            background: linear-gradient(135deg, var(--success), #45a049);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -348,7 +408,7 @@
             font-size: 5rem;
             color: white;
             box-shadow: 0 20px 50px rgba(76, 175, 80, 0.5);
-            animation: successPulse 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+            animation: successPulse 0.6s var(--transition),
                        successFloat 2s ease-in-out infinite 0.6s;
             position: relative;
             overflow: hidden;
@@ -394,13 +454,14 @@
 
         .modal-content h3 {
             font-size: 2.2rem;
-            background: linear-gradient(135deg, #4caf50, #45a049);
+            background: linear-gradient(135deg, var(--success), #45a049);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 15px;
             animation: slideDown 0.6s ease-out 0.3s both;
             font-weight: 800;
+            letter-spacing: 1px;
         }
 
         .modal-content p {
@@ -408,6 +469,8 @@
             font-size: 1.1rem;
             animation: slideDown 0.6s ease-out 0.4s both;
             margin: 0;
+            line-height: 1.6;
+            font-weight: 500;
         }
 
         @keyframes slideDown {
@@ -421,7 +484,7 @@
             }
         }
 
-        /* أيقونات عائمة محسنة */
+        /* أيقونات عائمة */
         .floating-icons {
             position: fixed;
             top: 0;
@@ -468,6 +531,7 @@
             animation: shake 0.4s ease-out;
             font-weight: 600;
             font-size: 0.95rem;
+            backdrop-filter: blur(10px);
         }
 
         @keyframes shake {
@@ -480,7 +544,7 @@
             display: block;
         }
 
-        /* تأثير الخطوط المتحركة */
+        /* الخط المتحرك */
         .animated-line {
             height: 2px;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
@@ -724,7 +788,7 @@
             }
         });
 
-        // التحقق من الكود
+        // التحقق من الكود - مع الحفاظ على جميع الدوال من قاعدة البيانات
         function verifyCode(code) {
             const pendingUser = JSON.parse(sessionStorage.getItem('pendingUser'));
             const modal = document.getElementById('successModal');
